@@ -8,7 +8,7 @@ RUN apt-get update && apt-get install -y \
     pkg-config \
     && rm -rf /var/lib/apt/lists/*
 
-COPY backend_requirements.txt requirements.txt
+COPY requirements.txt requirements.txt
 RUN pip install --no-cache-dir --user -r requirements.txt
 
 
@@ -25,8 +25,8 @@ COPY --from=builder /root/.local /root/.local
 
 ENV PATH=/root/.local/bin:$PATH
 
-COPY backend/app ./app
-COPY backend/run.py .
+COPY app ./app
+COPY run.py .
 
 RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
 USER appuser
