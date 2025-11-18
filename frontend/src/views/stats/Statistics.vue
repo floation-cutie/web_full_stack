@@ -129,7 +129,8 @@ import { ref, onMounted, nextTick, watch } from 'vue'
 import * as echarts from 'echarts'
 import { Search } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
-import { getMonthlyStats, getCities, getServiceTypes } from '@/api/user'
+import { getMonthlyStats } from '@/api/stats'
+import { getCities, getServiceTypes } from '@/api/user'
 
 const chartRef = ref(null)
 const loading = ref(false)
