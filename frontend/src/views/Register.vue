@@ -30,6 +30,15 @@
             />
           </el-form-item>
 
+          <el-form-item label="Real Name" prop="bname">
+            <el-input
+              v-model="registerForm.bname"
+              placeholder="Enter real name"
+              size="large"
+              :prefix-icon="User"
+            />
+          </el-form-item>
+
           <el-form-item label="Password" prop="password">
             <el-input
               v-model="registerForm.password"
@@ -59,6 +68,19 @@
               size="large"
               :prefix-icon="Phone"
             />
+          </el-form-item>
+
+          <el-form-item label="ID Type" prop="ctype">
+            <el-select
+              v-model="registerForm.ctype"
+              placeholder="Select ID type"
+              size="large"
+              style="width: 100%"
+            >
+              <el-option label="ID Card" value="身份证" />
+              <el-option label="Passport" value="护照" />
+              <el-option label="Other" value="其他" />
+            </el-select>
           </el-form-item>
 
           <el-form-item label="ID Number" prop="idno">
@@ -109,9 +131,11 @@ const loading = ref(false)
 
 const registerForm = reactive({
   username: '',
+  bname: '',
   password: '',
   confirmPassword: '',
   phoneNo: '',
+  ctype: '',
   idno: ''
 })
 
@@ -145,6 +169,10 @@ const registerRules = {
     { required: true, message: 'Please enter username', trigger: 'blur' },
     { min: 3, max: 20, message: 'Username length must be 3-20 characters', trigger: 'blur' }
   ],
+  bname: [
+    { required: true, message: 'Please enter real name', trigger: 'blur' },
+    { min: 2, max: 50, message: 'Real name length must be 2-50 characters', trigger: 'blur' }
+  ],
   password: [
     { required: true, validator: validatePassword, trigger: 'blur' }
   ],
@@ -155,9 +183,12 @@ const registerRules = {
     { required: true, message: 'Please enter phone number', trigger: 'blur' },
     { pattern: /^1[3-9]\d{9}$/, message: 'Invalid phone number format', trigger: 'blur' }
   ],
+  ctype: [
+    { required: true, message: 'Please select ID type', trigger: 'change' }
+  ],
   idno: [
     { required: true, message: 'Please enter ID number', trigger: 'blur' },
-    { pattern: /^\d{17}[\dXx]$/, message: 'Invalid ID number format', trigger: 'blur' }
+    { min: 6, max: 50, message: 'ID number length must be 6-50 characters', trigger: 'blur' }
   ]
 }
 
@@ -174,8 +205,10 @@ const handleRegister = async () => {
   try {
     await userStore.register({
       uname: registerForm.username,
+      bname: registerForm.bname,
       bpwd: registerForm.password,
       phoneNo: registerForm.phoneNo,
+      ctype: registerForm.ctype,
       idno: registerForm.idno
     })
     ElMessage.success('Registration successful, please login')
