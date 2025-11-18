@@ -1,0 +1,118 @@
+# ============================================================================
+# GoodServices Backend - Python Dependencies
+# ============================================================================
+# This file contains all Python packages required for the GoodServices backend
+# Install with: pip install -r requirements.txt
+# ============================================================================
+
+# ============================================================================
+# Core Web Framework
+# ============================================================================
+# FastAPI - Modern, fast web framework for building APIs
+fastapi==0.104.1
+
+# Uvicorn - ASGI server for running FastAPI applications
+uvicorn[standard]==0.24.0
+
+# Python-multipart - Required for file uploads
+python-multipart==0.0.6
+
+# ============================================================================
+# Database & ORM
+# ============================================================================
+# SQLAlchemy - Python SQL toolkit and Object-Relational Mapping (ORM)
+sqlalchemy==2.0.23
+
+# PyMySQL - Pure Python MySQL client
+pymysql==1.1.0
+
+# Alembic - Database migration tool for SQLAlchemy
+alembic==1.12.1
+
+# ============================================================================
+# Data Validation & Serialization
+# ============================================================================
+# Pydantic - Data validation using Python type annotations
+pydantic==2.5.0
+
+# Pydantic Settings - Environment variable management
+pydantic-settings==2.1.0
+
+# ============================================================================
+# Authentication & Security
+# ============================================================================
+# Python-Jose - JWT implementation with multiple backends
+python-jose[cryptography]==3.3.0
+
+# Passlib - Password hashing library with BCrypt support
+passlib[bcrypt]==1.7.4
+
+# BCrypt - Secure password hashing
+bcrypt==4.1.1
+
+# Cryptography - Cryptographic recipes and primitives
+cryptography==41.0.7
+
+# ============================================================================
+# Environment Configuration
+# ============================================================================
+# Python-dotenv - Load environment variables from .env files
+python-dotenv==1.0.0
+
+# ============================================================================
+# Development & Testing
+# ============================================================================
+# Pytest - Testing framework
+pytest==7.4.3
+
+# Pytest-asyncio - Async test support for pytest
+pytest-asyncio==0.21.1
+
+# Httpx - Modern HTTP client for testing
+httpx==0.25.2
+
+# ============================================================================
+# Code Quality & Formatting
+# ============================================================================
+# Black - Code formatter
+black==23.11.0
+
+# Flake8 - Style guide enforcement
+flake8==6.1.0
+
+# Mypy - Static type checker
+mypy==1.7.0
+
+# Isort - Import sorting
+isort==5.13.0
+
+# ============================================================================
+# Utilities & Tools
+# ============================================================================
+# Requests - HTTP library (for external API calls)
+requests==2.31.0
+
+# Python-dateutil - Date utilities
+python-dateutil==2.8.2
+
+# ============================================================================
+# Optional Dependencies for Advanced Features
+# ============================================================================
+# Redis support (optional)
+redis==5.0.1
+
+# Celery - Distributed task queue (optional)
+celery==5.3.4
+
+# Sentry - Error tracking (optional)
+sentry-sdk==1.38.0
+
+# ============================================================================
+# Notes
+# ============================================================================
+# - Versions are pinned for stability
+# - Update carefully and test after version bumps
+# - Some packages have extra dependencies ([feature] notation)
+# - Optional packages can be removed if not using those features
+# - Development dependencies (pytest, black, etc.) can go to requirements-dev.txt
+# ============================================================================

@@ -1,2 +1,231 @@
+# =============================================================================
+# GoodServices Project .gitignore
+# =============================================================================
+# This file specifies which files and directories should NOT be committed to Git
+# It covers Python backend, Node.js frontend, and MySQL database files
+# =============================================================================
+
+# =============================================================================
+# ENVIRONMENT VARIABLES & SECRETS
+# =============================================================================
+# NEVER commit environment files with secrets
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Environment variable backup files
+.env.backup
+.env.*.backup
+
+# Secrets vault
+secrets/
+.secrets/
+
+# =============================================================================
+# PYTHON BACKEND
+# =============================================================================
+# Virtual environment directories
+venv/
+env/
+ENV/
+.venv/
+.env.venv
+
+# Python build artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
 build/
-CLAUDE.md
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Testing and coverage
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.hypothesis/
+*.cover
+.pytest_cache
+.coverage.json
+
+# Type checking
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# IDE & Editor configurations
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+.project
+.pydevproject
+.settings/
+*.sublime-project
+*.sublime-workspace
+
+# Database files (local SQLite, if used)
+*.db
+*.sqlite
+*.sqlite3
+db.sqlite3
+
+# Uploads and media
+uploads/
+media/
+temp/
+tmp/
+/backend/uploads/*
+!/backend/uploads/.gitkeep
+
+# Log files
+*.log
+logs/
+/backend/logs/*
+!/backend/logs/.gitkeep
+
+# =============================================================================
+# NODE.JS FRONTEND
+# =============================================================================
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Distribution directories
+dist/
+dist-ssr/
+*.local
+/frontend/dist/*
+!/frontend/dist/.gitkeep
+
+# IDE
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Environment files (frontend)
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Build cache
+.vite/
+.cache/
+
+# =============================================================================
+# MYSQL & DATABASE
+# =============================================================================
+# MySQL data files
+*.ibd
+ibdata1
+ib_logfile0
+ib_logfile1
+ib_logfile101
+mysql/
+/data/
+/database/
+
+# Database dumps and backups
+# *.sql  # Uncomment to ignore SQL files
+*.sql.gz
+*.sql.bak
+*.dump
+backup/
+backups/
+dump/
+
+# =============================================================================
+# DOCKER
+# =============================================================================
+# Docker compose override files
+docker-compose.override.yml
+docker-compose.dev.yml
+
+# Docker build cache
+.dockerignore
+
+# =============================================================================
+# GENERAL DEVELOPMENT
+# =============================================================================
+# OS files
+.DS_Store
+Thumbs.db
+*.lnk
+
+# Editor backup files
+*.bak
+*.backup
+*~
+.#*
+
+# Temporary files
+*.tmp
+*.temp
+.tmp/
+
+# IDE temporary files
+.metadata/
+.classpath
+.c9/
+*.iml
+
+# =============================================================================
+# PROJECT SPECIFIC
+# =============================================================================
+# Configuration files with sensitive data
+config.local.py
+settings.local.py
+
+# Generated documentation
+docs/_build/
+site/
+
+# CI/CD temporary files
+.circleci/config.local.yml
+.travis.local.yml
+
+# Test data and fixtures
+test-data/
+fixtures/
+
+# =============================================================================
+# COMMENTS
+# =============================================================================
+# IMPORTANT:
+# - DO NOT commit .env files with secrets!
+# - DO NOT commit database files!
+# - DO NOT commit node_modules or venv!
+# - DO NOT commit IDE settings!
+# =============================================================================
