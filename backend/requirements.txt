@@ -3,7 +3,8 @@ uvicorn[standard]==0.27.0
 sqlalchemy==2.0.25
 pymysql==1.1.0
 python-jose[cryptography]==3.3.0
-passlib[bcrypt]==1.7.4
+passlib>=1.7.4  # <--- 保持至少 1.7.4，但允许安装更新版本
+bcrypt==4.3.0   # <--- 明确添加并升级/固定 bcrypt 版本
 pydantic==2.5.0
 pydantic-settings==2.1.0
 python-multipart==0.0.6

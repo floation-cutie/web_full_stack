@@ -1,0 +1,49 @@
+
+Running 15 tests using 1 worker
+
+  ✓   1 [chromium] › tests/e2e/goodservices.spec.ts:39:3 › GoodServices E2E Tests › Phase 1.1: User Registration - Create e2e_user1 (3.8s)
+  ✓   2 [chromium] › tests/e2e/goodservices.spec.ts:67:3 › GoodServices E2E Tests › Phase 1.2: User Login - Authenticate with e2e_user1 (1.5s)
+  ✘   3 [chromium] › tests/e2e/goodservices.spec.ts:84:3 › GoodServices E2E Tests › Phase 1.3: Dashboard Access - Verify home page (676ms)
+  -   4 [chromium] › tests/e2e/goodservices.spec.ts:100:3 › GoodServices E2E Tests › Phase 1.4: Profile View - Check user info displays
+  -   5 [chromium] › tests/e2e/goodservices.spec.ts:122:3 › GoodServices E2E Tests › Phase 2.1: Publish Service Request
+  -   6 [chromium] › tests/e2e/goodservices.spec.ts:161:3 › GoodServices E2E Tests › Phase 2.2: View My Requests
+  -   7 [chromium] › tests/e2e/goodservices.spec.ts:182:3 › GoodServices E2E Tests › Phase 2.3: Browse Requests - Check public listing
+  -   8 [chromium] › tests/e2e/goodservices.spec.ts:201:3 › GoodServices E2E Tests › Phase 3.1: Create Second User - e2e_user2
+  -   9 [chromium] › tests/e2e/goodservices.spec.ts:222:3 › GoodServices E2E Tests › Phase 3.2: User2 Responds to User1 Request
+  -  10 [chromium] › tests/e2e/goodservices.spec.ts:263:3 › GoodServices E2E Tests › Phase 3.3: User1 Accepts User2 Response
+  -  11 [chromium] › tests/e2e/goodservices.spec.ts:305:3 › GoodServices E2E Tests › Phase 3.4: Verify Accept Record Created
+  -  12 [chromium] › tests/e2e/goodservices.spec.ts:327:3 › GoodServices E2E Tests › Phase 4.1: Form Validation - Weak Password
+  -  13 [chromium] › tests/e2e/goodservices.spec.ts:343:3 › GoodServices E2E Tests › Phase 4.2: Form Validation - Duplicate Username
+  -  14 [chromium] › tests/e2e/goodservices.spec.ts:368:3 › GoodServices E2E Tests › Phase 4.3: Authorization - User2 Cannot Edit User1 Request
+  -  15 [chromium] › tests/e2e/goodservices.spec.ts:401:3 › GoodServices E2E Tests › Phase 4.4: 404 Handling - Invalid Route
+
+
+  1) [chromium] › tests/e2e/goodservices.spec.ts:84:3 › GoodServices E2E Tests › Phase 1.3: Dashboard Access - Verify home page 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBeTruthy[2m()[22m
+
+    Received: [31mfalse[39m
+
+       95 |     // Should have navigation or user menu
+       96 |     const hasNav = await page.locator('nav, .navbar, .header, .el-menu').count() > 0;
+    >  97 |     expect(hasNav).toBeTruthy();
+          |                    ^
+       98 |   });
+       99 |
+      100 |   test('Phase 1.4: Profile View - Check user info displays', async ({ page }) => {
+        at /home/cutie/Agent-Helper/web_full_stack/frontend/tests/e2e/goodservices.spec.ts:97:20
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/goodservices-GoodServices--00c70-d-Access---Verify-home-page-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/goodservices-GoodServices--00c70-d-Access---Verify-home-page-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/goodservices-GoodServices--00c70-d-Access---Verify-home-page-chromium/error-context.md
+
+  1 failed
+    [chromium] › tests/e2e/goodservices.spec.ts:84:3 › GoodServices E2E Tests › Phase 1.3: Dashboard Access - Verify home page 
+  12 did not run
+  2 passed (7.2s)

@@ -131,7 +131,7 @@ const handleSubmit = async () => {
   try {
     await createNeed({
       stype_id: form.stypeId,
-      ps_content: form.psContent,
+      ps_desc: form.psContent,
       ps_address: form.psAddress,
       ps_phone: form.psPhone,
       ps_remark: form.psRemark

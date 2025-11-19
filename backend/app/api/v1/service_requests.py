@@ -19,13 +19,47 @@ def get_service_requests(
     current_user = Depends(get_current_user)
 ):
     result = crud_service_request.get_service_requests(
-        db, page=page, size=size, user_id=user_id, 
+        db, page=page, size=size, user_id=user_id,
         stype_id=stype_id, city_id=city_id, ps_state=ps_state
     )
-    
+
     return {
         "code": 200,
         "data": result
+    }
+
+@router.get("/my")
+def get_my_service_requests(
+    page: int = Query(1, ge=1),
+    size: int = Query(10, ge=1, le=100),
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)
+):
+    result = crud_service_request.get_service_requests(
+        db, page=page, size=size, user_id=current_user.id
+    )
+
+    return {
+        "code": 200,
+        "data": result
+    }
+
+@router.get("/{request_id}")
+def get_service_request(
+    request_id: int,
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)
+):
+    db_request = crud_service_request.get_service_request(db, request_id)
+    if not db_request:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Service request not found"
+        )
+
+    return {
+        "code": 200,
+        "data": db_request
     }
 
 @router.post("", status_code=status.HTTP_201_CREATED)
@@ -55,19 +89,48 @@ def update_service_request(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Service request not found"
         )
-    
+
     if db_request.psr_userid != current_user.id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Not authorized to update this request"
         )
-    
+
     updated_request = crud_service_request.update_service_request(db, request_id, request_update)
-    
+
     return {
         "code": 200,
         "message": "Service request updated successfully",
-        "data": {"id": updated_request.id}
+        "data": updated_request
+    }
+
+@router.put("/{request_id}/cancel")
+def cancel_service_request(
+    request_id: int,
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)
+):
+    db_request = crud_service_request.get_service_request(db, request_id)
+    if not db_request:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Service request not found"
+        )
+
+    if db_request.psr_userid != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not authorized to cancel this request"
+        )
+
+    db_request.ps_state = -1
+    db.commit()
+    db.refresh(db_request)
+
+    return {
+        "code": 200,
+        "message": "Service request cancelled successfully",
+        "data": db_request
     }
 
 @router.delete("/{request_id}")
@@ -82,16 +145,17 @@ def delete_service_request(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Service request not found"
         )
-    
+
     if db_request.psr_userid != current_user.id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Not authorized to delete this request"
         )
-    
+
     crud_service_request.delete_service_request(db, request_id)
-    
+
     return {
         "code": 200,
-        "message": "Service request deleted successfully"
+        "message": "Service request deleted successfully",
+        "data": db_request
     }

@@ -19,6 +19,10 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y \
     default-libmysqlclient-dev \
     wget \
+    # === 新增：bcrypt/passlib 运行时依赖 ===
+    # bcrypt 和其他加密库可能需要的运行时库
+    libffi-dev \
+    libssl-dev \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /usr/local/lib/python3.10/site-packages /usr/local/lib/python3.10/site-packages

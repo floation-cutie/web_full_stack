@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export const getMyNeeds = (params) => {
   return request({
-    url: '/api/v1/service-requests/my-needs',
+    url: '/api/v1/service-requests/my',
     method: 'get',
     params
   })
@@ -41,7 +41,7 @@ export const deleteNeed = (id) => {
 export const cancelNeed = (id) => {
   return request({
     url: `/api/v1/service-requests/${id}/cancel`,
-    method: 'post'
+    method: 'put'
   })
 }
 

@@ -8,9 +8,12 @@ from app.core.security import verify_password
 
 router = APIRouter()
 
-@router.get("/me", response_model=UserResponse)
+@router.get("/me")
 def get_current_user_info(current_user = Depends(get_current_user)):
-    return current_user
+    return {
+        "code": 200,
+        "data": current_user
+    }
 
 @router.put("/me")
 def update_current_user(
@@ -19,19 +22,14 @@ def update_current_user(
     db: Session = Depends(get_db)
 ):
     updated_user = crud_user.update_user(db, current_user.id, user_update)
-    
+
     return {
         "code": 200,
         "message": "User updated successfully",
-        "data": {
-            "id": updated_user.id,
-            "uname": updated_user.uname,
-            "bname": updated_user.bname,
-            "phoneNo": updated_user.phoneNo
-        }
+        "data": updated_user
     }
 
-@router.put("/password")
+@router.put("/me/password")
 def update_password(
     password_update: PasswordUpdate,
     current_user = Depends(get_current_user),

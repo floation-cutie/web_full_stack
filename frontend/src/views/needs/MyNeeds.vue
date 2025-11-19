@@ -42,13 +42,13 @@
         stripe
         style="width: 100%"
       >
-        <el-table-column prop="srid" label="ID" width="80" />
-        <el-table-column prop="service_type_name" label="Service Type" width="120" />
-        <el-table-column prop="ps_content" label="Description" show-overflow-tooltip />
-        <el-table-column prop="ps_address" label="Address" width="150" show-overflow-tooltip />
-        <el-table-column prop="ps_time" label="Publish Time" width="180">
+        <el-table-column prop="id" label="ID" width="80" />
+        <el-table-column prop="stype_id" label="Service Type" width="120" />
+        <el-table-column prop="ps_desc" label="Description" show-overflow-tooltip />
+        <el-table-column prop="cityID" label="City" width="100" />
+        <el-table-column prop="ps_begindate" label="Start Date" width="180">
           <template #default="{ row }">
-            {{ formatDateTime(row.ps_time) }}
+            {{ formatDateTime(row.ps_begindate) }}
           </template>
         </el-table-column>
         <el-table-column prop="ps_state" label="Status" width="100">
@@ -60,21 +60,21 @@
         </el-table-column>
         <el-table-column label="Actions" width="250" fixed="right">
           <template #default="{ row }">
-            <el-button type="primary" size="small" @click="viewDetail(row.srid)">
+            <el-button type="primary" size="small" @click="viewDetail(row.id)">
               View
             </el-button>
             <el-button
               v-if="row.ps_state === 0"
               type="warning"
               size="small"
-              @click="handleCancel(row.srid)"
+              @click="handleCancel(row.id)"
             >
               Cancel
             </el-button>
             <el-button
               type="danger"
               size="small"
-              @click="handleDelete(row.srid)"
+              @click="handleDelete(row.id)"
             >
               Delete
             </el-button>

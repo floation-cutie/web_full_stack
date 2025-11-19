@@ -15,24 +15,33 @@ def get_monthly_statistics(
 ):
     start_date = datetime.strptime(f"{start_month}-01", "%Y-%m-%d")
     end_date = datetime.strptime(f"{end_month}-01", "%Y-%m-%d")
-    
+
+    # Detect database type and use appropriate date formatting
+    db_dialect = db.bind.dialect.name
+    if db_dialect == 'sqlite':
+        # SQLite uses strftime
+        date_format_func = lambda col: func.strftime('%Y-%m', col)
+    else:
+        # MySQL uses date_format
+        date_format_func = lambda col: func.date_format(col, '%Y-%m')
+
     needs_query = db.query(
-        func.date_format(ServiceRequest.ps_begindate, '%Y-%m').label('month'),
+        date_format_func(ServiceRequest.ps_begindate).label('month'),
         func.count(ServiceRequest.id).label('published_count')
     ).filter(
         ServiceRequest.ps_begindate >= start_date,
         ServiceRequest.ps_begindate <= end_date
     )
-    
+
     if city_id:
         needs_query = needs_query.filter(ServiceRequest.cityID == city_id)
     if service_type_id:
         needs_query = needs_query.filter(ServiceRequest.stype_id == service_type_id)
-    
+
     needs_query = needs_query.group_by('month')
-    
+
     completed_query = db.query(
-        func.date_format(AcceptInfo.accept_date, '%Y-%m').label('month'),
+        date_format_func(AcceptInfo.accept_date).label('month'),
         func.count(AcceptInfo.id).label('completed_count')
     ).filter(
         AcceptInfo.accept_date >= start_date,

@@ -30,13 +30,12 @@
         stripe
         style="width: 100%"
       >
-        <el-table-column prop="response_id" label="Response ID" width="120" />
-        <el-table-column prop="request_title" label="Request" show-overflow-tooltip />
-        <el-table-column prop="response_content" label="My Response" show-overflow-tooltip />
-        <el-table-column prop="response_phone" label="Contact Phone" width="150" />
-        <el-table-column prop="response_time" label="Response Time" width="180">
+        <el-table-column prop="id" label="Response ID" width="120" />
+        <el-table-column prop="srid" label="Request ID" width="120" />
+        <el-table-column prop="response_desc" label="My Response" show-overflow-tooltip />
+        <el-table-column prop="response_date" label="Response Time" width="180">
           <template #default="{ row }">
-            {{ formatDateTime(row.response_time) }}
+            {{ formatDateTime(row.response_date) }}
           </template>
         </el-table-column>
         <el-table-column prop="response_state" label="Status" width="100">
@@ -48,14 +47,14 @@
         </el-table-column>
         <el-table-column label="Actions" width="200" fixed="right">
           <template #default="{ row }">
-            <el-button type="primary" size="small" @click="viewRequest(row.sr_id)">
+            <el-button type="primary" size="small" @click="viewRequest(row.srid)">
               View Request
             </el-button>
             <el-button
               v-if="row.response_state === 0"
               type="warning"
               size="small"
-              @click="handleCancel(row.response_id)"
+              @click="handleCancel(row.id)"
             >
               Cancel
             </el-button>

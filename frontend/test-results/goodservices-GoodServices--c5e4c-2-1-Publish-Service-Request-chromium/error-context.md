@@ -1,0 +1,71 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - generic [ref=e5]:
+    - generic [ref=e6]:
+      - img [ref=e8]
+      - generic [ref=e10]: GoodServices
+    - menubar [ref=e11]:
+      - menuitem "Dashboard" [ref=e12] [cursor=pointer]:
+        - img [ref=e14]
+        - generic [ref=e16]: Dashboard
+      - menuitem "My Needs" [ref=e17] [cursor=pointer]:
+        - img [ref=e19]
+        - generic [ref=e21]: My Needs
+      - menuitem "My Responses" [ref=e22] [cursor=pointer]:
+        - img [ref=e24]
+        - generic [ref=e27]: My Responses
+      - menuitem "Statistics" [ref=e28] [cursor=pointer]:
+        - img [ref=e30]
+        - generic [ref=e32]: Statistics
+    - button "e2e1_023722" [ref=e35] [cursor=pointer]:
+      - img [ref=e37]
+      - generic [ref=e39]: e2e1_023722
+      - img [ref=e41]
+  - main [ref=e43]:
+    - generic [ref=e45]:
+      - generic [ref=e47]:
+        - heading "Publish Service Request" [level=2] [ref=e48]
+        - button "Back" [ref=e49] [cursor=pointer]:
+          - generic [ref=e50]: Back
+      - generic [ref=e52]:
+        - generic [ref=e53]:
+          - generic [ref=e54]: "* Service Type"
+          - generic [ref=e57] [cursor=pointer]:
+            - generic:
+              - combobox "* Service Type" [ref=e59]
+              - generic [ref=e60]: 水电维修
+            - img [ref=e63]
+        - generic [ref=e65]:
+          - generic [ref=e66]: "* Description"
+          - generic [ref=e68]:
+            - textbox "* Description" [ref=e69]:
+              - /placeholder: Please describe your service request in detail
+              - text: Kitchen sink is leaking, need immediate repair
+            - generic [ref=e70]: 46 / 500
+        - generic [ref=e71]:
+          - generic [ref=e72]: "* Service Address"
+          - textbox "* Service Address" [ref=e76]:
+            - /placeholder: Please enter the service address
+            - text: Test Address, Test City
+        - generic [ref=e77]:
+          - generic [ref=e78]: "* Contact Phone"
+          - textbox "* Contact Phone" [ref=e82]:
+            - /placeholder: Please enter contact phone number
+            - text: "13800138000"
+        - generic [ref=e83]:
+          - generic [ref=e84]: Remarks
+          - generic [ref=e86]:
+            - textbox "Remarks" [ref=e87]:
+              - /placeholder: Any additional information (optional)
+              - text: E2E test request - automated
+            - generic [ref=e88]: 28 / 200
+        - generic [ref=e90]:
+          - button "Publish Request" [ref=e91] [cursor=pointer]:
+            - generic [ref=e92]: Publish Request
+          - button "Reset" [ref=e93] [cursor=pointer]:
+            - generic [ref=e94]: Reset
+          - button "Cancel" [ref=e95] [cursor=pointer]:
+            - generic [ref=e96]: Cancel
+```

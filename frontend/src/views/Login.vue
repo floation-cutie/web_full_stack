@@ -110,10 +110,13 @@ const handleLogin = async () => {
       username: loginForm.username,
       password: loginForm.password
     })
+    console.log('Login successful, redirecting to /home')
     ElMessage.success('Login successful')
-    router.push('/home')
+    await router.push('/home')
+    console.log('Redirected to:', router.currentRoute.value.path)
   } catch (error) {
-    ElMessage.error(error.response?.data?.detail || 'Login failed')
+    console.error('Login error:', error)
+    ElMessage.error(error.response?.data?.detail || error.message || 'Login failed')
   } finally {
     loading.value = false
   }

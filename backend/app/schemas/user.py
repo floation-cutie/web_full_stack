@@ -11,7 +11,9 @@ class UserBase(BaseModel):
 
 class UserResponse(UserBase):
     id: int
-    psrDate: datetime
+    rdate: datetime
+    udate: datetime | None = None
+    userlvl: str | None = None
 
     class Config:
         from_attributes = True

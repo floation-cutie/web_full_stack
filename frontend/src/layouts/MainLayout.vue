@@ -63,6 +63,16 @@ import { computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { ElMessageBox } from 'element-plus'
+import {
+  Service,
+  HomeFilled,
+  Document,
+  ChatDotRound,
+  DataAnalysis,
+  User,
+  CaretBottom,
+  SwitchButton
+} from '@element-plus/icons-vue'
 
 const router = useRouter()
 const route = useRoute()
