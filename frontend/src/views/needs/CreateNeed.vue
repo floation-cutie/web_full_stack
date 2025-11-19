@@ -16,8 +16,17 @@
         label-position="right"
         style="max-width: 800px"
       >
-        <el-form-item label="Service Type" prop="stypeId">
-          <el-select v-model="form.stypeId" placeholder="Please select service type" style="width: 100%">
+        <el-form-item label="Service Title" prop="sr_title">
+          <el-input
+            v-model="form.sr_title"
+            placeholder="Please enter service request title (e.g., Need plumbing repair)"
+            maxlength="80"
+            show-word-limit
+          />
+        </el-form-item>
+
+        <el-form-item label="Service Type" prop="stype_id">
+          <el-select v-model="form.stype_id" placeholder="Please select service type" style="width: 100%">
             <el-option
               v-for="type in serviceTypes"
               :key="type.id"
@@ -27,40 +36,24 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item label="Description" prop="psContent">
+        <el-form-item label="City" prop="cityID">
+          <el-select v-model="form.cityID" placeholder="Please select city" style="width: 100%">
+            <el-option
+              v-for="city in cities"
+              :key="city.id"
+              :label="city.name"
+              :value="city.id"
+            />
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="Description" prop="desc">
           <el-input
-            v-model="form.psContent"
+            v-model="form.desc"
             type="textarea"
             :rows="5"
             placeholder="Please describe your service request in detail"
-            maxlength="500"
-            show-word-limit
-          />
-        </el-form-item>
-
-        <el-form-item label="Service Address" prop="psAddress">
-          <el-input
-            v-model="form.psAddress"
-            placeholder="Please enter the service address"
-            maxlength="200"
-          />
-        </el-form-item>
-
-        <el-form-item label="Contact Phone" prop="psPhone">
-          <el-input
-            v-model="form.psPhone"
-            placeholder="Please enter contact phone number"
-            maxlength="20"
-          />
-        </el-form-item>
-
-        <el-form-item label="Remarks" prop="psRemark">
-          <el-input
-            v-model="form.psRemark"
-            type="textarea"
-            :rows="3"
-            placeholder="Any additional information (optional)"
-            maxlength="200"
+            maxlength="300"
             show-word-limit
           />
         </el-form-item>
@@ -82,39 +75,36 @@ import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { createNeed } from '@/api/serviceRequest'
-import { SERVICE_TYPES } from '@/utils/constants'
+import { SERVICE_TYPES, CITIES } from '@/utils/constants'
 
 const router = useRouter()
 const formRef = ref(null)
 const loading = ref(false)
 const serviceTypes = ref(SERVICE_TYPES)
+const cities = ref(CITIES)
 
 const form = reactive({
-  stypeId: null,
-  psContent: '',
-  psAddress: '',
-  psPhone: '',
-  psRemark: ''
+  sr_title: '',
+  stype_id: null,
+  cityID: null,
+  desc: '',
+  file_list: '' // Default to empty string as per schema
 })
 
 const rules = {
-  stypeId: [
+  sr_title: [
+    { required: true, message: 'Please enter service title', trigger: 'blur' },
+    { min: 3, max: 80, message: 'Title length must be 3-80 characters', trigger: 'blur' }
+  ],
+  stype_id: [
     { required: true, message: 'Please select service type', trigger: 'change' }
   ],
-  psContent: [
+  cityID: [
+    { required: true, message: 'Please select city', trigger: 'change' }
+  ],
+  desc: [
     { required: true, message: 'Please enter description', trigger: 'blur' },
-    { min: 10, max: 500, message: 'Description length must be 10-500 characters', trigger: 'blur' }
-  ],
-  psAddress: [
-    { required: true, message: 'Please enter service address', trigger: 'blur' },
-    { min: 5, max: 200, message: 'Address length must be 5-200 characters', trigger: 'blur' }
-  ],
-  psPhone: [
-    { required: true, message: 'Please enter contact phone', trigger: 'blur' },
-    { pattern: /^1[3-9]\d{9}$/, message: 'Invalid phone number format', trigger: 'blur' }
-  ],
-  psRemark: [
-    { max: 200, message: 'Remarks cannot exceed 200 characters', trigger: 'blur' }
+    { min: 10, max: 300, message: 'Description length must be 10-300 characters', trigger: 'blur' }
   ]
 }
 
@@ -130,11 +120,11 @@ const handleSubmit = async () => {
   loading.value = true
   try {
     await createNeed({
-      stype_id: form.stypeId,
-      ps_desc: form.psContent,
-      ps_address: form.psAddress,
-      ps_phone: form.psPhone,
-      ps_remark: form.psRemark
+      sr_title: form.sr_title,
+      stype_id: form.stype_id,
+      cityID: form.cityID,
+      desc: form.desc,
+      file_list: form.file_list
     })
     ElMessage.success('Service request published successfully')
     router.push('/needs')

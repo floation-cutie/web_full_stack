@@ -34,14 +34,14 @@ export const RESPONSE_STATUS_TYPE = {
 }
 
 export const CITIES = [
-  { id: 1, name: '北京', value: 'beijing' },
-  { id: 2, name: '上海', value: 'shanghai' },
-  { id: 3, name: '广州', value: 'guangzhou' },
-  { id: 4, name: '深圳', value: 'shenzhen' },
-  { id: 5, name: '杭州', value: 'hangzhou' },
-  { id: 6, name: '成都', value: 'chengdu' },
-  { id: 7, name: '武汉', value: 'wuhan' },
-  { id: 8, name: '西安', value: 'xian' }
+  { id: 110100, name: '北京市' },
+  { id: 310100, name: '上海市' },
+  { id: 440100, name: '广州市' },
+  { id: 440300, name: '深圳市' },
+  { id: 330100, name: '杭州市' },
+  { id: 510100, name: '成都市' },
+  { id: 420100, name: '武汉市' },
+  { id: 610100, name: '西安市' }
 ]
 
 export const PAGE_SIZES = [10, 20, 50, 100]
