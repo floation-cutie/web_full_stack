@@ -124,7 +124,8 @@ const handleSubmit = async () => {
       stype_id: form.stype_id,
       cityID: form.cityID,
       desc: form.desc,
-      file_list: form.file_list
+      file_list: form.file_list,
+      ps_begindate: new Date().toISOString()
     })
     ElMessage.success('Service request published successfully')
     router.push('/needs')

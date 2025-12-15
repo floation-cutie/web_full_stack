@@ -192,7 +192,7 @@ class TestServiceMatching:
             json=service_request_data,
             headers=auth_headers
         )
-        request_id = create_req.json()["data"]["id"]
+        request_id = create_req.json()["data"]["sr_id"]
 
         # User 2 responds
         response_data = {**service_response_data, "srid": request_id}
@@ -310,15 +310,15 @@ class TestServiceMatching:
             json=service_request_data,
             headers=auth_headers
         )
-        request_id_1 = create_req_1.json()["data"]["id"]
+        request_id_1 = create_req_1.json()["data"]["sr_id"]
 
-        req_data_2 = {**service_request_data, "ps_title": "Second request"}
+        req_data_2 = {**service_request_data, "sr_title": "Second request"}
         create_req_2 = await client.post(
             "/api/v1/service-requests",
             json=req_data_2,
             headers=auth_headers
         )
-        request_id_2 = create_req_2.json()["data"]["id"]
+        request_id_2 = create_req_2.json()["data"]["sr_id"]
 
         # User 2 responds to both
         response_data_1 = {**service_response_data, "srid": request_id_1}

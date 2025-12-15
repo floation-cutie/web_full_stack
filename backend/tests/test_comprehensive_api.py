@@ -288,13 +288,12 @@ class TestServiceRequests:
                                               setup_test_data):
         """Test Case 6.1: Create service request successfully"""
         payload = {
-            "ps_title": "Need plumbing service",
-            "ps_desc": "Kitchen sink is leaking",
-            "ps_address": "123 Test Street, Beijing",
+            "sr_title": "Need plumbing service",
+            "desc": "Kitchen sink is leaking",
             "cityID": 1,
             "stype_id": 1,
             "ps_begindate": (datetime.utcnow() + timedelta(days=1)).isoformat(),
-            "ps_enddate": (datetime.utcnow() + timedelta(days=2)).isoformat()
+            "file_list": ""
         }
 
         response = await client.post("/api/v1/service-requests",
@@ -304,7 +303,7 @@ class TestServiceRequests:
         assert response.status_code == 201
         data = response.json()
         assert data["code"] == 200
-        assert "id" in data["data"]
+        assert "sr_id" in data["data"]
         print(f"✓ Test 6.1 PASSED: Service request created with ID {data['data']['id']}")
 
     async def test_6_2_missing_required_fields(self, client: AsyncClient,
@@ -312,7 +311,7 @@ class TestServiceRequests:
                                                setup_test_data):
         """Test Case 6.2: Create request with missing required fields"""
         payload = {
-            "ps_title": "Incomplete request",
+            "sr_title": "Incomplete request",
             # Missing stype_id, cityID, dates, etc.
         }
 
@@ -330,13 +329,13 @@ class TestServiceRequests:
         # Create a few requests first
         for i in range(3):
             payload = {
-                "ps_title": f"Service request {i+1}",
-                "ps_desc": f"Content {i+1}",
+                "sr_title": f"Service request {i+1}",
+                "desc": f"Content {i+1}",
                 "ps_address": f"Address {i+1}",
                 "cityID": 1,
                 "stype_id": 1,
                 "ps_begindate": (datetime.utcnow() + timedelta(days=1)).isoformat(),
-                "ps_enddate": (datetime.utcnow() + timedelta(days=2)).isoformat()
+                "file_list": ""
             }
             await client.post("/api/v1/service-requests", json=payload, headers=auth_headers)
 
@@ -358,13 +357,12 @@ class TestServiceRequests:
         # Create requests with different types
         for stype_id in [1, 2]:
             payload = {
-                "ps_title": f"Type {stype_id} request",
-                "ps_desc": "Content",
-                "ps_address": "Address",
+                "sr_title": f"Type {stype_id} request",
+                "desc": "Content",
                 "cityID": 1,
                 "stype_id": stype_id,
                 "ps_begindate": (datetime.utcnow() + timedelta(days=1)).isoformat(),
-                "ps_enddate": (datetime.utcnow() + timedelta(days=2)).isoformat()
+                "file_list": ""
             }
             await client.post("/api/v1/service-requests", json=payload, headers=auth_headers)
 
@@ -386,25 +384,23 @@ class TestServiceRequests:
         """Test Case 8.1: List only my service requests"""
         # User 1 creates a request
         payload1 = {
-            "ps_title": "User 1 request",
-            "ps_desc": "Content",
-            "ps_address": "Address",
+            "sr_title": "User 1 request",
+            "desc": "Content",
             "cityID": 1,
             "stype_id": 1,
             "ps_begindate": (datetime.utcnow() + timedelta(days=1)).isoformat(),
-            "ps_enddate": (datetime.utcnow() + timedelta(days=2)).isoformat()
+            "file_list": ""
         }
         await client.post("/api/v1/service-requests", json=payload1, headers=auth_headers)
 
         # User 2 creates a request
         payload2 = {
-            "ps_title": "User 2 request",
-            "ps_desc": "Content",
-            "ps_address": "Address",
+            "sr_title": "User 2 request",
+            "desc": "Content",
             "cityID": 1,
             "stype_id": 1,
             "ps_begindate": (datetime.utcnow() + timedelta(days=1)).isoformat(),
-            "ps_enddate": (datetime.utcnow() + timedelta(days=2)).isoformat()
+            "file_list": ""
         }
         await client.post("/api/v1/service-requests", json=payload2, headers=auth_headers_2)
 
@@ -425,13 +421,12 @@ class TestServiceRequests:
         """Test Case 9.1: Get single service request details"""
         # Create a request
         payload = {
-            "ps_title": "Single request",
-            "ps_desc": "Content",
-            "ps_address": "Address",
+            "sr_title": "Single request",
+            "desc": "Content",
             "cityID": 1,
             "stype_id": 1,
             "ps_begindate": (datetime.utcnow() + timedelta(days=1)).isoformat(),
-            "ps_enddate": (datetime.utcnow() + timedelta(days=2)).isoformat()
+            "file_list": ""
         }
         create_response = await client.post("/api/v1/service-requests",
                                            json=payload,
@@ -444,8 +439,8 @@ class TestServiceRequests:
 
         assert response.status_code == 200
         data = response.json()
-        assert data["data"]["id"] == request_id
-        assert data["data"]["ps_title"] == "Single request"
+        assert data["data"]["sr_id"] == request_id
+        assert data["data"]["sr_title"] == "Single request"
         print(f"✓ Test 9.1 PASSED: Single request retrieved successfully")
 
     async def test_9_2_nonexistent_request(self, client: AsyncClient,
@@ -463,13 +458,12 @@ class TestServiceRequests:
         """Test Case 10.1: Update own service request"""
         # Create request
         payload = {
-            "ps_title": "Original title",
-            "ps_desc": "Original content",
-            "ps_address": "Address",
+            "sr_title": "Original title",
+            "desc": "Original content",
             "cityID": 1,
             "stype_id": 1,
             "ps_begindate": (datetime.utcnow() + timedelta(days=1)).isoformat(),
-            "ps_enddate": (datetime.utcnow() + timedelta(days=2)).isoformat()
+            "file_list": ""
         }
         create_response = await client.post("/api/v1/service-requests",
                                            json=payload,
@@ -478,13 +472,12 @@ class TestServiceRequests:
 
         # Update request
         update_payload = {
-            "ps_title": "Updated title",
-            "ps_desc": "Updated content",
-            "ps_address": "Address",
+            "sr_title": "Updated title",
+            "desc": "Updated content",
             "cityID": 1,
             "stype_id": 1,
             "ps_begindate": (datetime.utcnow() + timedelta(days=1)).isoformat(),
-            "ps_enddate": (datetime.utcnow() + timedelta(days=2)).isoformat()
+            "file_list": ""
         }
         response = await client.put(f"/api/v1/service-requests/{request_id}",
                                     json=update_payload,
@@ -492,8 +485,8 @@ class TestServiceRequests:
 
         assert response.status_code == 200
         data = response.json()
-        assert data["data"]["ps_title"] == "Updated title"
-        assert data["data"]["ps_desc"] == "Updated content"
+        assert data["data"]["sr_title"] == "Updated title"
+        assert data["data"]["desc"] == "Updated content"
         print(f"✓ Test 10.1 PASSED: Request updated successfully")
 
     async def test_10_2_update_others_request(self, client: AsyncClient,
@@ -503,13 +496,12 @@ class TestServiceRequests:
         """Test Case 10.2: Try to update another user's request"""
         # User 1 creates request
         payload = {
-            "ps_title": "User 1 request",
-            "ps_desc": "Content",
-            "ps_address": "Address",
+            "sr_title": "User 1 request",
+            "desc": "Content",
             "cityID": 1,
             "stype_id": 1,
             "ps_begindate": (datetime.utcnow() + timedelta(days=1)).isoformat(),
-            "ps_enddate": (datetime.utcnow() + timedelta(days=2)).isoformat()
+            "file_list": ""
         }
         create_response = await client.post("/api/v1/service-requests",
                                            json=payload,
@@ -518,13 +510,12 @@ class TestServiceRequests:
 
         # User 2 tries to update it
         update_payload = {
-            "ps_title": "Hacked title",
-            "ps_desc": "Content",
-            "ps_address": "Address",
+            "sr_title": "Hacked title",
+            "desc": "Content",
             "cityID": 1,
             "stype_id": 1,
             "ps_begindate": (datetime.utcnow() + timedelta(days=1)).isoformat(),
-            "ps_enddate": (datetime.utcnow() + timedelta(days=2)).isoformat()
+            "file_list": ""
         }
         response = await client.put(f"/api/v1/service-requests/{request_id}",
                                     json=update_payload,
@@ -539,13 +530,12 @@ class TestServiceRequests:
         """Test Case 11.1: Cancel own service request"""
         # Create request
         payload = {
-            "ps_title": "To be cancelled",
-            "ps_desc": "Content",
-            "ps_address": "Address",
+            "sr_title": "To be cancelled",
+            "desc": "Content",
             "cityID": 1,
             "stype_id": 1,
             "ps_begindate": (datetime.utcnow() + timedelta(days=1)).isoformat(),
-            "ps_enddate": (datetime.utcnow() + timedelta(days=2)).isoformat()
+            "file_list": ""
         }
         create_response = await client.post("/api/v1/service-requests",
                                            json=payload,
@@ -570,13 +560,12 @@ class TestServiceRequests:
         """Test Case 12.1: Delete own service request"""
         # Create request
         payload = {
-            "ps_title": "To be deleted",
-            "ps_desc": "Content",
-            "ps_address": "Address",
+            "sr_title": "To be deleted",
+            "desc": "Content",
             "cityID": 1,
             "stype_id": 1,
             "ps_begindate": (datetime.utcnow() + timedelta(days=1)).isoformat(),
-            "ps_enddate": (datetime.utcnow() + timedelta(days=2)).isoformat()
+            "file_list": ""
         }
         create_response = await client.post("/api/v1/service-requests",
                                            json=payload,
@@ -612,13 +601,12 @@ class TestServiceResponses:
         """Test Case 13.1: Respond to a service request"""
         # User 1 creates a request
         request_payload = {
-            "ps_title": "Need help",
-            "ps_desc": "Content",
-            "ps_address": "Address",
+            "sr_title": "Need help",
+            "desc": "Content",
             "cityID": 1,
             "stype_id": 1,
             "ps_begindate": (datetime.utcnow() + timedelta(days=1)).isoformat(),
-            "ps_enddate": (datetime.utcnow() + timedelta(days=2)).isoformat()
+            "file_list": ""
         }
         create_response = await client.post("/api/v1/service-requests",
                                            json=request_payload,
@@ -637,7 +625,7 @@ class TestServiceResponses:
 
         assert response.status_code == 201
         data = response.json()
-        assert "id" in data["data"]
+        assert "sr_id" in data["data"]
         print(f"✓ Test 13.1 PASSED: Response created with ID {data['data']['id']}")
 
     async def test_14_1_list_my_responses(self, client: AsyncClient,
@@ -647,13 +635,12 @@ class TestServiceResponses:
         """Test Case 14.1: List my service responses"""
         # User 1 creates request
         request_payload = {
-            "ps_title": "Need help",
-            "ps_desc": "Content",
-            "ps_address": "Address",
+            "sr_title": "Need help",
+            "desc": "Content",
             "cityID": 1,
             "stype_id": 1,
             "ps_begindate": (datetime.utcnow() + timedelta(days=1)).isoformat(),
-            "ps_enddate": (datetime.utcnow() + timedelta(days=2)).isoformat()
+            "file_list": ""
         }
         create_response = await client.post("/api/v1/service-requests",
                                            json=request_payload,
@@ -687,13 +674,12 @@ class TestServiceResponses:
         """Test Case 15.1: Cancel my service response"""
         # User 1 creates request
         request_payload = {
-            "ps_title": "Need help",
-            "ps_desc": "Content",
-            "ps_address": "Address",
+            "sr_title": "Need help",
+            "desc": "Content",
             "cityID": 1,
             "stype_id": 1,
             "ps_begindate": (datetime.utcnow() + timedelta(days=1)).isoformat(),
-            "ps_enddate": (datetime.utcnow() + timedelta(days=2)).isoformat()
+            "file_list": ""
         }
         create_response = await client.post("/api/v1/service-requests",
                                            json=request_payload,
@@ -739,13 +725,12 @@ class TestServiceMatching:
         """Test Case 16.1: Accept a service response"""
         # User 1 creates request
         request_payload = {
-            "ps_title": "Need help",
-            "ps_desc": "Content",
-            "ps_address": "Address",
+            "sr_title": "Need help",
+            "desc": "Content",
             "cityID": 1,
             "stype_id": 1,
             "ps_begindate": (datetime.utcnow() + timedelta(days=1)).isoformat(),
-            "ps_enddate": (datetime.utcnow() + timedelta(days=2)).isoformat()
+            "file_list": ""
         }
         create_response = await client.post("/api/v1/service-requests",
                                            json=request_payload,
@@ -778,13 +763,12 @@ class TestServiceMatching:
         """Test Case 16.2: Non-request-owner tries to accept"""
         # User 1 creates request
         request_payload = {
-            "ps_title": "Need help",
-            "ps_desc": "Content",
-            "ps_address": "Address",
+            "sr_title": "Need help",
+            "desc": "Content",
             "cityID": 1,
             "stype_id": 1,
             "ps_begindate": (datetime.utcnow() + timedelta(days=1)).isoformat(),
-            "ps_enddate": (datetime.utcnow() + timedelta(days=2)).isoformat()
+            "file_list": ""
         }
         create_response = await client.post("/api/v1/service-requests",
                                            json=request_payload,

@@ -27,7 +27,7 @@ def get_monthly_statistics(
 
     needs_query = db.query(
         date_format_func(ServiceRequest.ps_begindate).label('month'),
-        func.count(ServiceRequest.id).label('published_count')
+        func.count(ServiceRequest.sr_id).label('published_count')
     ).filter(
         ServiceRequest.ps_begindate >= start_date,
         ServiceRequest.ps_begindate <= end_date

@@ -21,7 +21,7 @@ def accept_service(
             detail="Service response not found"
         )
     
-    db_request = get_service_request(db, db_response.srid)
+    db_request = get_service_request(db, db_response.sr_id)
     if db_request.psr_userid != current_user.id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
@@ -55,7 +55,7 @@ def reject_service(
             detail="Service response not found"
         )
     
-    db_request = get_service_request(db, db_response.srid)
+    db_request = get_service_request(db, db_response.sr_id)
     if db_request.psr_userid != current_user.id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,

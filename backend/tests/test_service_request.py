@@ -21,7 +21,7 @@ class TestServiceRequests:
         data = response.json()
         assert data["code"] == 200
         assert data["message"] == "Service request created successfully"
-        assert "id" in data["data"]
+        assert "sr_id" in data["data"]
 
     async def test_create_request_without_auth(self, client: AsyncClient,
                                                service_request_data, setup_test_data):
@@ -50,8 +50,8 @@ class TestServiceRequests:
                                                           auth_headers, setup_test_data):
         """Test creating request with missing required fields"""
         incomplete_data = {
-            "ps_title": "Test",
-            # Missing ps_begindate, ps_enddate, stype_id, cityID
+            "sr_title": "Test",
+            # Missing ps_begindate, desc, stype_id, cityID
         }
 
         response = await client.post(
@@ -117,7 +117,7 @@ class TestServiceRequests:
         for i in range(5):
             data = {
                 **service_request_data,
-                "ps_title": f"Request {i}"
+                "sr_title": f"Request {i}"
             }
             await client.post("/api/v1/service-requests", json=data, headers=auth_headers)
 
@@ -142,7 +142,7 @@ class TestServiceRequests:
         for i in range(5):
             data = {
                 **service_request_data,
-                "ps_title": f"Request {i}"
+                "sr_title": f"Request {i}"
             }
             await client.post("/api/v1/service-requests", json=data, headers=auth_headers)
 
@@ -183,21 +183,21 @@ class TestServiceRequests:
                                                        auth_headers, setup_test_data):
         """Test filtering requests by service type"""
         data1 = {
-            "ps_title": "Plumbing",
+            "sr_title": "Plumbing",
             "ps_begindate": (datetime.utcnow() + timedelta(days=1)).isoformat(),
-            "ps_enddate": (datetime.utcnow() + timedelta(days=2)).isoformat(),
-            "ps_desc": "Need plumbing",
+            "desc": "Need plumbing",
             "stype_id": 1,
-            "cityID": 1
+            "cityID": 1,
+            "file_list": ""
         }
 
         data2 = {
-            "ps_title": "Cleaning",
+            "sr_title": "Cleaning",
             "ps_begindate": (datetime.utcnow() + timedelta(days=1)).isoformat(),
-            "ps_enddate": (datetime.utcnow() + timedelta(days=2)).isoformat(),
-            "ps_desc": "Need cleaning",
+            "desc": "Need cleaning",
             "stype_id": 3,
-            "cityID": 1
+            "cityID": 1,
+            "file_list": ""
         }
 
         await client.post("/api/v1/service-requests", json=data1, headers=auth_headers)
@@ -249,8 +249,8 @@ class TestServiceRequests:
                                           created_service_request, setup_test_data):
         """Test updating a service request"""
         updated_data = {
-            "ps_title": "Updated title",
-            "ps_desc": "Updated description"
+            "sr_title": "Updated title",
+            "desc": "Updated description"
         }
 
         response = await client.put(
@@ -262,14 +262,14 @@ class TestServiceRequests:
         assert response.status_code == 200
         data = response.json()
         assert data["code"] == 200
-        assert "id" in data["data"]
+        assert "sr_id" in data["data"]
 
     async def test_update_request_by_different_user(self, client: AsyncClient,
                                                     auth_headers, auth_headers_2,
                                                     created_service_request,
                                                     service_request_data, setup_test_data):
         """Test that only the creator can update a request"""
-        updated_data = {"ps_title": "Updated title"}
+        updated_data = {"sr_title": "Updated title"}
 
         response = await client.put(
             f"/api/v1/service-requests/{created_service_request}",
@@ -284,7 +284,7 @@ class TestServiceRequests:
         """Test updating nonexistent request"""
         response = await client.put(
             "/api/v1/service-requests/99999",
-            json={"ps_title": "Updated"},
+            json={"sr_title": "Updated"},
             headers=auth_headers
         )
 
@@ -308,7 +308,7 @@ class TestServiceRequests:
             f"/api/v1/service-requests?ps_state=-1",
             headers=auth_headers
         )
-        assert any(item["id"] == created_service_request for item in get_response.json()["data"]["items"])
+        assert any(item["sr_id"] == created_service_request for item in get_response.json()["data"]["items"])
 
     async def test_delete_request_by_different_user(self, client: AsyncClient,
                                                     auth_headers, auth_headers_2,
@@ -335,10 +335,9 @@ class TestServiceRequests:
                                                        auth_headers, setup_test_data):
         """Test creating request with optional description and files"""
         data = {
-            "ps_title": "Test with files",
+            "sr_title": "Test with files",
             "ps_begindate": (datetime.utcnow() + timedelta(days=1)).isoformat(),
-            "ps_enddate": (datetime.utcnow() + timedelta(days=2)).isoformat(),
-            "ps_desc": "Full description here",
+            "desc": "Full description here",
             "stype_id": 1,
             "cityID": 1,
             "file_list": "photo1.jpg,photo2.jpg"
@@ -356,12 +355,12 @@ class TestServiceRequests:
                                                  auth_headers, setup_test_data):
         """Test creating request with dates in the past"""
         data = {
-            "ps_title": "Past request",
+            "sr_title": "Past request",
             "ps_begindate": (datetime.utcnow() - timedelta(days=1)).isoformat(),
-            "ps_enddate": (datetime.utcnow()).isoformat(),
-            "ps_desc": "Test",
+            "desc": "Test",
             "stype_id": 1,
-            "cityID": 1
+            "cityID": 1,
+            "file_list": ""
         }
 
         response = await client.post(

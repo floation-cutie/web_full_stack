@@ -10,33 +10,27 @@
 
       <el-descriptions v-if="detail" :column="2" border>
         <el-descriptions-item label="Request ID">
-          {{ detail.srid }}
+          {{ detail.sr_id }}
+        </el-descriptions-item>
+        <el-descriptions-item label="Title" :span="2">
+          {{ detail.sr_title }}
         </el-descriptions-item>
         <el-descriptions-item label="Service Type">
-          {{ detail.service_type_name }}
+          {{ getServiceTypeName(detail.stype_id) }}
         </el-descriptions-item>
         <el-descriptions-item label="Status">
           <el-tag :type="detail.ps_state === 0 ? 'success' : 'info'">
             {{ detail.ps_state === 0 ? 'Published' : 'Cancelled' }}
           </el-tag>
         </el-descriptions-item>
-        <el-descriptions-item label="Publish Time">
-          {{ formatDateTime(detail.ps_time) }}
+        <el-descriptions-item label="Start Date">
+          {{ formatDateTime(detail.ps_begindate) }}
         </el-descriptions-item>
-        <el-descriptions-item label="Publisher">
-          {{ detail.publisher_name }}
-        </el-descriptions-item>
-        <el-descriptions-item label="Contact Phone">
-          {{ detail.ps_phone }}
-        </el-descriptions-item>
-        <el-descriptions-item label="Service Address" :span="2">
-          {{ detail.ps_address }}
+        <el-descriptions-item label="City">
+          {{ detail.cityID }}
         </el-descriptions-item>
         <el-descriptions-item label="Description" :span="2">
-          {{ detail.ps_content }}
-        </el-descriptions-item>
-        <el-descriptions-item v-if="detail.ps_remark" label="Remarks" :span="2">
-          {{ detail.ps_remark }}
+          {{ detail.desc }}
         </el-descriptions-item>
       </el-descriptions>
     </el-card>
@@ -101,7 +95,7 @@ import { getNeedDetail, getNeedResponses } from '@/api/serviceRequest'
 import { acceptResponse } from '@/api/match'
 import { useUserStore } from '@/stores/user'
 import Pagination from '@/components/Pagination.vue'
-import { RESPONSE_STATUS_TEXT, RESPONSE_STATUS_TYPE } from '@/utils/constants'
+import { RESPONSE_STATUS_TEXT, RESPONSE_STATUS_TYPE, SERVICE_TYPES } from '@/utils/constants'
 
 const route = useRoute()
 const router = useRouter()
@@ -129,6 +123,11 @@ const getResponseStatusText = (status) => {
 
 const getResponseStatusType = (status) => {
   return RESPONSE_STATUS_TYPE[status] || 'info'
+}
+
+const getServiceTypeName = (typeId) => {
+  const type = SERVICE_TYPES.find(t => t.id === typeId)
+  return type ? type.name : typeId
 }
 
 const loadDetail = async () => {

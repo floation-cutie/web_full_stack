@@ -44,7 +44,7 @@ def get_my_service_requests(
         "data": result
     }
 
-@router.get("/{request_id}")
+@router.get("/{request_id}", response_model=dict)
 def get_service_request(
     request_id: int,
     db: Session = Depends(get_db),
@@ -69,11 +69,11 @@ def create_service_request(
     current_user = Depends(get_current_user)
 ):
     db_request = crud_service_request.create_service_request(db, request, current_user.id)
-    
+
     return {
         "code": 200,
         "message": "Service request created successfully",
-        "data": {"id": db_request.id}
+        "data": {"sr_id": db_request.sr_id}
     }
 
 @router.put("/{request_id}")

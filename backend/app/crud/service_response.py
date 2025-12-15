@@ -4,16 +4,16 @@ from app.schemas.service_response import ServiceResponseCreate, ServiceResponseU
 from math import ceil
 
 def get_service_response(db: Session, response_id: int):
-    return db.query(ServiceResponse).filter(ServiceResponse.id == response_id).first()
+    return db.query(ServiceResponse).filter(ServiceResponse.response_id == response_id).first()
 
 def get_service_responses(db: Session, page: int = 1, size: int = 10, user_id: int = None,
-                          srid: int = None, response_state: int = None):
+                          sr_id: int = None, response_state: int = None):
     query = db.query(ServiceResponse)
-    
+
     if user_id is not None:
         query = query.filter(ServiceResponse.response_userid == user_id)
-    if srid is not None:
-        query = query.filter(ServiceResponse.srid == srid)
+    if sr_id is not None:
+        query = query.filter(ServiceResponse.sr_id == sr_id)
     if response_state is not None:
         query = query.filter(ServiceResponse.response_state == response_state)
     

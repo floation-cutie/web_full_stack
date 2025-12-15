@@ -4,11 +4,18 @@ WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm ci
+# npm ci often fails in Docker with "Exit handler never called" but dependencies are actually installed
+# So we ignore the error and verify vite exists before continuing
+RUN npm ci || true && \
+    if [ ! -f node_modules/.bin/vite ]; then \
+        echo "Retrying with npm install..."; \
+        rm -rf node_modules package-lock.json; \
+        npm install; \
+    fi
 
 COPY . .
 
-ARG VITE_API_BASE_URL=http://localhost:8000
+ARG VITE_API_BASE_URL=/api
 ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
 
 RUN npm run build

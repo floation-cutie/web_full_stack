@@ -222,12 +222,12 @@ def auth_headers_3(authenticated_user_3):
 def service_request_data():
     """Sample service request creation data"""
     return {
-        "ps_title": "Kitchen plumbing repair",
+        "sr_title": "Kitchen plumbing repair",
         "ps_begindate": (datetime.utcnow() + timedelta(days=1)).isoformat(),
-        "ps_enddate": (datetime.utcnow() + timedelta(days=2)).isoformat(),
-        "ps_desc": "Kitchen sink is leaking badly",
+        "desc": "Kitchen sink is leaking badly",
         "stype_id": 1,
-        "cityID": 1
+        "cityID": 1,
+        "file_list": ""
     }
 
 
@@ -235,12 +235,12 @@ def service_request_data():
 def service_request_data_2():
     """Second service request data"""
     return {
-        "ps_title": "Elderly care assistance",
+        "sr_title": "Elderly care assistance",
         "ps_begindate": (datetime.utcnow() + timedelta(days=3)).isoformat(),
-        "ps_enddate": (datetime.utcnow() + timedelta(days=5)).isoformat(),
-        "ps_desc": "Need daily care for elderly parent",
+        "desc": "Need daily care for elderly parent",
         "stype_id": 2,
-        "cityID": 1
+        "cityID": 1,
+        "file_list": ""
     }
 
 
@@ -271,7 +271,7 @@ async def created_service_request(client: AsyncClient, authenticated_user,
         json=service_request_data,
         headers=auth_headers
     )
-    return response.json()["data"]["id"]
+    return response.json()["data"]["sr_id"]
 
 
 @pytest.fixture

@@ -48,14 +48,14 @@ def get_service_responses(
     page: int = Query(1, ge=1),
     size: int = Query(10, ge=1, le=100),
     user_id: int = Query(None),
-    srid: int = Query(None),
+    sr_id: int = Query(None),
     response_state: int = Query(None),
     db: Session = Depends(get_db),
     current_user = Depends(get_current_user)
 ):
     result = crud_service_response.get_service_responses(
         db, page=page, size=size, user_id=user_id,
-        srid=srid, response_state=response_state
+        sr_id=sr_id, response_state=response_state
     )
 
     return {
@@ -70,11 +70,11 @@ def create_service_response(
     current_user = Depends(get_current_user)
 ):
     db_response = crud_service_response.create_service_response(db, response, current_user.id)
-    
+
     return {
         "code": 200,
         "message": "Service response created successfully",
-        "data": {"id": db_response.id}
+        "data": {"id": db_response.response_id}
     }
 
 @router.put("/{response_id}")

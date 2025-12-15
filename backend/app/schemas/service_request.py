@@ -1,36 +1,35 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from datetime import datetime
 
 class ServiceRequestCreate(BaseModel):
-    ps_title: str
-    ps_begindate: datetime
-    ps_enddate: datetime
-    ps_desc: str | None = None
-    stype_id: int
-    cityID: int
-    file_list: str | None = None
+    sr_title: str = Field(..., min_length=1, max_length=80, description="Service request title")
+    stype_id: int = Field(..., description="Service type ID")
+    cityID: int = Field(..., description="City ID")
+    desc: str = Field(..., min_length=1, max_length=300, description="Service description")
+    file_list: str = Field("", max_length=300, description="Comma-separated file list")
+    ps_begindate: datetime = Field(..., description="Start/publish date")
 
 class ServiceRequestUpdate(BaseModel):
-    ps_title: str | None = None
-    ps_begindate: datetime | None = None
-    ps_enddate: datetime | None = None
-    ps_desc: str | None = None
-    stype_id: int | None = None
-    cityID: int | None = None
-    file_list: str | None = None
-    ps_state: int | None = None
+    sr_title: str | None = Field(None, min_length=1, max_length=80, description="Service request title")
+    stype_id: int | None = Field(None, description="Service type ID")
+    cityID: int | None = Field(None, description="City ID")
+    desc: str | None = Field(None, min_length=1, max_length=300, description="Service description")
+    file_list: str | None = Field(None, max_length=300, description="Comma-separated file list")
+    ps_begindate: datetime | None = Field(None, description="Start/publish date")
+    ps_state: int | None = Field(None, description="Service state: 0=published, -1=cancelled")
+    ps_updatedate: datetime | None = Field(None, description="Update date")
 
 class ServiceRequestResponse(BaseModel):
-    id: int
-    psr_userid: int
-    ps_title: str
-    ps_begindate: datetime
-    ps_enddate: datetime
-    ps_desc: str | None
+    sr_id: int
+    sr_title: str
     stype_id: int
+    psr_userid: int
     cityID: int
-    file_list: str | None
+    desc: str
+    file_list: str
+    ps_begindate: datetime
     ps_state: int
+    ps_updatedate: datetime | None = None
 
     class Config:
         from_attributes = True

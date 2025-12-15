@@ -42,9 +42,14 @@
         stripe
         style="width: 100%"
       >
-        <el-table-column prop="id" label="ID" width="80" />
-        <el-table-column prop="stype_id" label="Service Type" width="120" />
-        <el-table-column prop="ps_desc" label="Description" show-overflow-tooltip />
+        <el-table-column prop="sr_id" label="ID" width="80" />
+        <el-table-column prop="sr_title" label="Title" show-overflow-tooltip min-width="150" />
+        <el-table-column prop="stype_id" label="Service Type" width="120">
+          <template #default="{ row }">
+            {{ getServiceTypeName(row.stype_id) }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="desc" label="Description" show-overflow-tooltip />
         <el-table-column prop="cityID" label="City" width="100" />
         <el-table-column prop="ps_begindate" label="Start Date" width="180">
           <template #default="{ row }">
@@ -60,21 +65,21 @@
         </el-table-column>
         <el-table-column label="Actions" width="250" fixed="right">
           <template #default="{ row }">
-            <el-button type="primary" size="small" @click="viewDetail(row.id)">
+            <el-button type="primary" size="small" @click="viewDetail(row.sr_id)">
               View
             </el-button>
             <el-button
               v-if="row.ps_state === 0"
               type="warning"
               size="small"
-              @click="handleCancel(row.id)"
+              @click="handleCancel(row.sr_id)"
             >
               Cancel
             </el-button>
             <el-button
               type="danger"
               size="small"
-              @click="handleDelete(row.id)"
+              @click="handleDelete(row.sr_id)"
             >
               Delete
             </el-button>
@@ -117,6 +122,11 @@ const filterForm = reactive({
 const formatDateTime = (dateStr) => {
   if (!dateStr) return ''
   return new Date(dateStr).toLocaleString('zh-CN')
+}
+
+const getServiceTypeName = (typeId) => {
+  const type = serviceTypes.value.find(t => t.id === typeId)
+  return type ? type.name : typeId
 }
 
 const loadData = async () => {
