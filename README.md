@@ -23,7 +23,7 @@ web_full_stack/
 └── test-artifacts/         # 测试工件和结果
 ```
 
-详细的目录结构说明，请参考 [STRUCTURE.md](STRUCTURE.md)
+详细的目录结构说明，请参考 [STRUCTURE.md](docs/STRUCTURE.md)
 
 ### 前置要求
 
@@ -72,7 +72,7 @@ npm install
 npm run dev
 ```
 
-访问应用：http://localhost:5173
+访问应用：http://localhost:80
 
 ### 数据库设置
 
@@ -123,7 +123,7 @@ mysql -u root -p goodservices < database/schema/test_data.sql
 | 文档 | 说明 |
 |------|------|
 | [technical_solution.md](docs/TECHNICAL_SOLUTION.md) | 完整的技术方案和架构设计 |
-| [DATABASE_DOCUMENTATION.md](docs/DATABASE_DOCUMENTATION.md) | 数据库架构和设计文档 |
+| [goodservices_database_documentation.md](docs/goodservices_database_documentation.md) | 数据库架构和设计文档 |
 | [requirements.pdf](docs/requirements.pdf) | 课程项目需求 |
 | [CLAUDE.md](CLAUDE.md) | Claude AI 工作指南 |
 

@@ -1083,7 +1083,7 @@ app = FastAPI(
 # CORS配置（允许前端跨域请求）
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],  # Vue开发服务器
+    allow_origins=["http://localhost:3000"],  # Vue开发服务器
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -1479,7 +1479,7 @@ uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 cd frontend
 npm run dev
 
-# 访问: http://localhost:5173
+# 访问: http://localhost:3000
 ```
 
 ---
