@@ -1,0 +1,22 @@
+# =============================================================================
+# Database (.gitignore) - MySQL & backup files
+# =============================================================================
+
+# Local database files
+*.ibd
+ibdata1
+ib_logfile*
+mysql/
+data/
+
+# Backup and dump files
+*.sql.gz
+*.sql.bak
+*.dump
+backup/
+backups/
+dump/
+
+# OS files
+Thumbs.db
+.DS_Store

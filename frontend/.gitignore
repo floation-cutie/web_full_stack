@@ -1,0 +1,46 @@
+# =============================================================================
+# Frontend (.gitignore) - Vue 3 & Node.js specific files
+# =============================================================================
+
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Build output
+dist/
+dist-ssr/
+*.local
+
+# IDE
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Environment
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Build cache
+.vite/
+.cache/
+
+# Logs and test outputs
+*.log
+*.txt
+test-results/
+
+# OS
+Thumbs.db
+.DS_Store

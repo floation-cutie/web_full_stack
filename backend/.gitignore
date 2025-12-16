@@ -1,0 +1,70 @@
+# =============================================================================
+# Backend (.gitignore) - FastAPI & Python specific files
+# =============================================================================
+
+# Virtual environment
+venv/
+env/
+ENV/
+.venv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Distribution
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.hypothesis/
+*.cover
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Environment
+.env
+.env.local
+
+# Logs
+logs/*
+!logs/.gitkeep
+*.log
+
+# SQLite databases (if used)
+*.db
+*.sqlite
+*.sqlite3
+
+# Uploads
+uploads/*
+!uploads/.gitkeep
+
+# OS
+Thumbs.db
+.DS_Store

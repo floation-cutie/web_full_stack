@@ -1,0 +1,75 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - generic [ref=e5]:
+    - generic [ref=e6]:
+      - img [ref=e8]
+      - generic [ref=e10]: GoodServices
+    - menubar [ref=e11]:
+      - menuitem "Dashboard" [ref=e12] [cursor=pointer]:
+        - img [ref=e14]
+        - generic [ref=e16]: Dashboard
+      - menuitem "My Needs" [ref=e17] [cursor=pointer]:
+        - img [ref=e19]
+        - generic [ref=e21]: My Needs
+      - menuitem "My Responses" [ref=e22] [cursor=pointer]:
+        - img [ref=e24]
+        - generic [ref=e27]: My Responses
+      - menuitem "Statistics" [ref=e28] [cursor=pointer]:
+        - img [ref=e30]
+        - generic [ref=e32]: Statistics
+    - button "e2e1_060836" [ref=e35] [cursor=pointer]:
+      - img [ref=e37]
+      - generic [ref=e39]: e2e1_060836
+      - img [ref=e41]
+  - main [ref=e43]:
+    - generic [ref=e44]:
+      - generic [ref=e47]:
+        - heading "Service Request Details" [level=2] [ref=e48]
+        - button "Back" [ref=e49] [cursor=pointer]:
+          - generic [ref=e50]: Back
+      - generic [ref=e52]:
+        - heading "Service Responses (0)" [level=3] [ref=e55]
+        - generic [ref=e56]:
+          - generic [ref=e58]:
+            - table [ref=e60]:
+              - rowgroup [ref=e69]:
+                - row "Response ID Responder Response Content Contact Phone Response Time Status Actions" [ref=e70]:
+                  - cell "Response ID" [ref=e71]:
+                    - generic [ref=e72]: Response ID
+                  - cell "Responder" [ref=e73]:
+                    - generic [ref=e74]: Responder
+                  - cell "Response Content" [ref=e75]:
+                    - generic [ref=e76]: Response Content
+                  - cell "Contact Phone" [ref=e77]:
+                    - generic [ref=e78]: Contact Phone
+                  - cell "Response Time" [ref=e79]:
+                    - generic [ref=e80]: Response Time
+                  - cell "Status" [ref=e81]:
+                    - generic [ref=e82]: Status
+                  - cell "Actions" [ref=e83]:
+                    - generic [ref=e84]: Actions
+            - generic [ref=e88]:
+              - table:
+                - rowgroup
+              - generic [ref=e90]: No Data
+          - generic [ref=e92]:
+            - generic [ref=e93]: Total 0
+            - generic [ref=e96] [cursor=pointer]:
+              - generic:
+                - combobox [ref=e98]
+                - generic [ref=e99]: 10/page
+              - img [ref=e102]
+            - button "Go to previous page" [disabled] [ref=e104]:
+              - generic:
+                - img
+            - list [ref=e105]:
+              - listitem "page 1" [ref=e106]: "1"
+            - button "Go to next page" [disabled] [ref=e107]:
+              - generic:
+                - img
+            - generic [ref=e108]:
+              - generic [ref=e109]: Go to
+              - spinbutton "Page" [ref=e112]: "1"
+```
