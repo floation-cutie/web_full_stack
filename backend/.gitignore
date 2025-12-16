@@ -34,10 +34,15 @@ wheels/
 # Testing
 .pytest_cache/
 .coverage
+.coverage.*
 htmlcov/
 .tox/
 .hypothesis/
 *.cover
+test-results/
+test-artifacts/
+.last-run.json
+artifacts/
 
 # IDE
 .vscode/

@@ -155,10 +155,8 @@ ib_logfile1
 ib_logfile101
 mysql/
 /data/
-/database/
 
-# Database dumps and backups
-# *.sql  # Uncomment to ignore SQL files
+# Database dumps and backups (but keep tracked .sql files in database/schema/)
 *.sql.gz
 *.sql.bak
 *.dump
@@ -219,6 +217,32 @@ site/
 # Test data and fixtures
 test-data/
 fixtures/
+
+# =============================================================================
+# PROJECT DEVELOPMENT FILES
+# =============================================================================
+# Temporary restructuring and analysis reports
+/PROJECT_RESTRUCTURING_REPORT.md
+/QUICK_REFERENCE.md
+/RESTRUCTURING_SUMMARY.md
+/STRUCTURE_ANALYSIS.md
+/STRUCTURE.md
+
+# Test result artifacts
+test-results/
+.last-run.json
+artifacts/
+
+# Frontend test output
+frontend/test-results/
+frontend/.pytest_cache/
+
+# =============================================================================
+# CACHE & BUILD ARTIFACTS
+# =============================================================================
+# Pytest cache
+.pytest_cache/
+*/.pytest_cache/
 
 # =============================================================================
 # COMMENTS

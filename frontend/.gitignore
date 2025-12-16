@@ -40,6 +40,13 @@ dist-ssr/
 *.log
 *.txt
 test-results/
+test-artifacts/
+.pytest_cache/
+
+# Playwright and testing
+playwright/.cache/
+.last-run.json
+artifacts/
 
 # OS
 Thumbs.db
