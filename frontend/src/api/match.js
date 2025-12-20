@@ -7,6 +7,13 @@ export const acceptResponse = (response_id) => {
   })
 }
 
+export const rejectResponse = (response_id) => {
+  return request({
+    url: `/api/v1/match/reject/${response_id}`,
+    method: 'post'
+  })
+}
+
 export const getMyMatches = (params) => {
   return request({
     url: '/api/v1/matches/my-matches',

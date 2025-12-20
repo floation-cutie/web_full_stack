@@ -113,7 +113,7 @@
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="Actions" width="120" fixed="right">
+        <el-table-column label="Actions" width="200" fixed="right">
           <template #default="{ row }">
             <!-- Debug information -->
             <div style="font-size: 12px; color: #999;">
@@ -121,13 +121,30 @@
               MY:{{ isMyRequest ? 'Y' : 'N' }} |
               Show:{{ row.response_state === 0 && isMyRequest ? 'Y' : 'N' }}
             </div>
+            <div v-if="row.response_state === 0 && isMyRequest">
+              <el-button
+                type="success"
+                size="small"
+                @click="handleAccept(row)"
+                style="margin-right: 5px;"
+              >
+                Accept
+              </el-button>
+              <el-button
+                type="danger"
+                size="small"
+                @click="handleReject(row)"
+              >
+                Reject
+              </el-button>
+            </div>
             <el-button
-              v-if="row.response_state === 0 && isMyRequest"
-              type="success"
+              type="primary"
               size="small"
-              @click="handleAccept(row)"
+              @click="viewResponseDetail(row)"
+              plain
             >
-              Accept
+              View Detail
             </el-button>
           </template>
         </el-table-column>
@@ -147,7 +164,7 @@ import { ref, reactive, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getNeedDetail, getNeedResponses, deleteNeed } from '@/api/serviceRequest'
-import { acceptResponse } from '@/api/match'
+import { acceptResponse, rejectResponse } from '@/api/match'
 import { useUserStore } from '@/stores/user'
 import Pagination from '@/components/Pagination.vue'
 import { RESPONSE_STATUS_TEXT, RESPONSE_STATUS_TYPE, SERVICE_TYPES } from '@/utils/constants'
@@ -346,6 +363,75 @@ const handleAccept = async (response) => {
   }
 }
 
+const handleReject = async (response) => {
+  try {
+    await ElMessageBox.confirm(
+      `Are you sure you want to reject the response from ${response.responder_name}?`,
+      'Confirm Reject',
+      {
+        confirmButtonText: 'Reject',
+        cancelButtonText: 'Cancel',
+        type: 'warning'
+      }
+    )
+    await rejectResponse(response.response_id)
+    ElMessage.success('Response rejected successfully')
+    loadResponses()
+    loadDetail()
+  } catch (error) {
+    if (error !== 'cancel') {
+      ElMessage.error('Failed to reject response')
+    }
+  }
+}
+
+const viewResponseDetail = (response) => {
+  // 在这里我们可以打开一个对话框显示响应的详细信息
+  ElMessageBox.alert(
+    `<div>
+      <p><strong>Responder:</strong> ${response.responder_name || '-'}</p>
+      <p><strong>Contact Phone:</strong> ${response.responder_phone || '-'}</p>
+      <p><strong>Response Time:</strong> ${formatDateTime(response.response_date)}</p>
+      <p><strong>Content:</strong> ${response.desc || 'NO CONTENT'}</p>
+      ${response.file_list ? `
+        <div style="margin-top: 15px;">
+          <strong>Attached Files:</strong>
+          <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;">
+            ${response.file_list.split(',').map(file => {
+              const fileName = file.trim();
+              if (!fileName) return '';
+              
+              const ext = fileName.split('.').pop().toLowerCase();
+              const imageExtensions = ['jpg', 'jpeg', 'png', 'gif'];
+              const videoExtensions = ['mp4', 'avi', 'mov', 'wmv'];
+              
+              if (imageExtensions.includes(ext)) {
+                return `<div style="width: 150px; height: 150px; overflow: hidden; border-radius: 4px;">
+                  <img src="${getFullImageUrl(fileName)}" alt="${fileName}" style="width: 100%; height: 100%; object-fit: cover;" />
+                </div>`;
+              } else if (videoExtensions.includes(ext)) {
+                return `<div style="width: 200px;">
+                  <video controls style="width: 100%; height: 150px;">
+                    <source src="${getFullImageUrl(fileName)}" type="${getVideoType(fileName)}">
+                    Your browser does not support the video tag.
+                  </video>
+                </div>`;
+              } else {
+                return `<div><a href="${getFullImageUrl(fileName)}" target="_blank">${fileName}</a></div>`;
+              }
+            }).join('')}
+          </div>
+        </div>
+      ` : ''}
+    </div>`,
+    'Response Detail',
+    {
+      dangerouslyUseHTMLString: true,
+      customClass: 'response-detail-dialog'
+    }
+  );
+}
+
 onMounted(() => {
   loadDetail()
   loadResponses()
@@ -415,5 +501,17 @@ onMounted(() => {
 .preview-video {
   width: 100%;
   height: 150px;
+}
+</style>
+
+<style>
+.response-detail-dialog {
+  width: 600px !important;
+  max-width: 90vw;
+}
+
+.response-detail-dialog .el-message-box__content {
+  max-height: 70vh;
+  overflow-y: auto;
 }
 </style>
