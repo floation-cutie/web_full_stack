@@ -24,6 +24,10 @@
             <el-icon><ChatDotRound /></el-icon>
             <span>My Responses</span>
           </el-menu-item>
+          <el-menu-item index="/browse-needs">
+            <el-icon><Search /></el-icon>
+            <span>Browse Needs</span>
+          </el-menu-item>
           <el-menu-item index="/stats">
             <el-icon><DataAnalysis /></el-icon>
             <span>Statistics</span>
@@ -71,7 +75,8 @@ import {
   DataAnalysis,
   User,
   CaretBottom,
-  SwitchButton
+  SwitchButton,
+  Search
 } from '@element-plus/icons-vue'
 
 const router = useRouter()

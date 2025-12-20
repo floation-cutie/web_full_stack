@@ -30,9 +30,23 @@
         stripe
         style="width: 100%"
       >
-        <el-table-column prop="id" label="Response ID" width="120" />
-        <el-table-column prop="srid" label="Request ID" width="120" />
-        <el-table-column prop="response_desc" label="My Response" show-overflow-tooltip />
+        <el-table-column prop="response_id" label="Response ID" width="120" />
+        <el-table-column prop="sr_id" label="Request ID" width="120" />
+        <el-table-column prop="desc" label="My Response" show-overflow-tooltip>
+  <template #default="{ row }">
+    <span>{{ row.desc || 'NO CONTENT' }}</span>
+  </template>
+</el-table-column>
+        <el-table-column prop="responder_name" label="Responder Name" width="150">
+          <template #default="{ row }">
+            <span>{{ row.responder_name || '-' }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="responder_phone" label="Responder Phone" width="150">
+          <template #default="{ row }">
+            <span>{{ row.responder_phone || '-' }}</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="response_date" label="Response Time" width="180">
           <template #default="{ row }">
             {{ formatDateTime(row.response_date) }}
@@ -45,18 +59,34 @@
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="Actions" width="200" fixed="right">
+        <el-table-column label="Actions" width="250" fixed="right">
           <template #default="{ row }">
-            <el-button type="primary" size="small" @click="viewRequest(row.srid)">
+            <el-button type="primary" size="small" @click="viewRequest(row.sr_id)">
               View Request
+            </el-button>
+            <el-button
+              v-if="row.response_state === 0"
+              type="success"
+              size="small"
+              @click="editResponse(row.response_id)"
+            >
+              Edit
             </el-button>
             <el-button
               v-if="row.response_state === 0"
               type="warning"
               size="small"
-              @click="handleCancel(row.id)"
+              @click="handleCancel(row.response_id)"
             >
               Cancel
+            </el-button>
+            <el-button
+              v-if="row.response_state === 0"
+              type="danger"
+              size="small"
+              @click="handleDelete(row.response_id)"
+            >
+              Delete
             </el-button>
           </template>
         </el-table-column>
@@ -75,7 +105,7 @@
 import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getMyResponses, cancelResponse } from '@/api/serviceResponse'
+import { getMyResponses, cancelResponse, deleteResponse } from '@/api/serviceResponse'
 import Pagination from '@/components/Pagination.vue'
 import { RESPONSE_STATUS_TEXT, RESPONSE_STATUS_TYPE } from '@/utils/constants'
 
@@ -112,9 +142,13 @@ const loadData = async () => {
       ...filterForm
     }
     const res = await getMyResponses(params)
+    console.log('API Response:', res)
+    console.log('Items:', res.data.items)
     tableData.value = res.data.items || []
     total.value = res.data.total || 0
+    console.log('Table Data:', tableData.value)
   } catch (error) {
+    console.error('Load data error:', error)
     ElMessage.error('Failed to load data')
   } finally {
     loading.value = false
@@ -153,6 +187,31 @@ const handleCancel = async (id) => {
   } catch (error) {
     if (error !== 'cancel') {
       ElMessage.error('Failed to cancel response')
+    }
+  }
+}
+
+const editResponse = (id) => {
+  router.push(`/responses/edit/${id}`)
+}
+
+const handleDelete = async (id) => {
+  try {
+    await ElMessageBox.confirm(
+      'Are you sure you want to permanently delete this response? This action cannot be undone.',
+      'Confirm Delete',
+      {
+        confirmButtonText: 'Delete',
+        cancelButtonText: 'Cancel',
+        type: 'warning'
+      }
+    )
+    await deleteResponse(id)
+    ElMessage.success('Response deleted successfully')
+    loadData()
+  } catch (error) {
+    if (error !== 'cancel') {
+      ElMessage.error('Failed to delete response')
     }
   }
 }

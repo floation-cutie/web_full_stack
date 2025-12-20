@@ -83,12 +83,12 @@ def setup_test_data(db_session):
     ]
 
     service_types = [
-        ServiceType(id=1, service_name="Plumbing"),
-        ServiceType(id=2, service_name="Elderly Care"),
-        ServiceType(id=3, service_name="Cleaning"),
-        ServiceType(id=4, service_name="Medical"),
-        ServiceType(id=5, service_name="Meals"),
-        ServiceType(id=6, service_name="Transportation"),
+        ServiceType(id=1, typename="Plumbing"),
+        ServiceType(id=2, typename="Elderly Care"),
+        ServiceType(id=3, typename="Cleaning"),
+        ServiceType(id=4, typename="Medical"),
+        ServiceType(id=5, typename="Meals"),
+        ServiceType(id=6, typename="Transportation"),
     ]
 
     for city in cities:

@@ -32,6 +32,10 @@ def get_service_requests(db: Session, page: int = 1, size: int = 10, user_id: in
     }
 
 def create_service_request(db: Session, request: ServiceRequestCreate, user_id: int):
+    # Log the incoming request data to debug file_list
+    print(f"Creating service request with data: {request.model_dump()}")
+    print(f"File list value: {request.file_list}")
+    
     db_request = ServiceRequest(
         **request.model_dump(),
         psr_userid=user_id,
@@ -40,6 +44,9 @@ def create_service_request(db: Session, request: ServiceRequestCreate, user_id: 
     db.add(db_request)
     db.commit()
     db.refresh(db_request)
+    
+    # Log the stored data
+    print(f"Stored request ID {db_request.sr_id} with file_list: {db_request.file_list}")
     return db_request
 
 def update_service_request(db: Session, request_id: int, request_update: ServiceRequestUpdate):
@@ -61,11 +68,17 @@ def update_service_request(db: Session, request_id: int, request_update: Service
     return db_request
 
 def delete_service_request(db: Session, request_id: int):
-    db_request = get_service_request(db, request_id)
-    if not db_request:
-        return False
+    try:
+        db_request = get_service_request(db, request_id)
+        if not db_request:
+            return False
 
-    db_request.ps_state = -1
-    db_request.ps_updatedate = datetime.utcnow()
-    db.commit()
-    return True
+        db.delete(db_request)
+        db.commit()
+        return True
+    except Exception as e:
+        print(f"Error in delete_service_request: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        db.rollback()
+        raise

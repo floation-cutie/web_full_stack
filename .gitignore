@@ -22,6 +22,7 @@
 # Secrets vault
 secrets/
 .secrets/
+tests/
 
 # =============================================================================
 # PYTHON BACKEND

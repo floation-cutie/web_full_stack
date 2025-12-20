@@ -1,27 +1,9 @@
 <template>
-  <div class="create-response-page">
-    <el-card v-loading="requestLoading" class="request-card">
-      <template #header>
-        <h3>Service Request Information</h3>
-      </template>
-
-      <el-descriptions v-if="requestDetail" :column="2" border>
-        <el-descriptions-item label="Service Type">
-          {{ requestDetail.service_type_name }}
-        </el-descriptions-item>
-        <el-descriptions-item label="Publisher">
-          {{ requestDetail.publisher_name }}
-        </el-descriptions-item>
-        <el-descriptions-item label="Description" :span="2">
-          {{ requestDetail.desc }}
-        </el-descriptions-item>
-      </el-descriptions>
-    </el-card>
-
-    <el-card class="form-card">
+  <div class="edit-need-page">
+    <el-card v-loading="loading">
       <template #header>
         <div class="card-header">
-          <h2>Submit Service Response</h2>
+          <h2>Edit Service Request</h2>
           <el-button @click="router.back()">Back</el-button>
         </div>
       </template>
@@ -34,22 +16,44 @@
         label-position="right"
         style="max-width: 800px"
       >
-        <el-form-item label="Response Title" prop="responseTitle">
+        <el-form-item label="Service Title" prop="sr_title">
           <el-input
-            v-model="form.responseTitle"
-            placeholder="Please enter a title for your response"
-            maxlength="50"
+            v-model="form.sr_title"
+            placeholder="Please enter service request title (e.g., Need plumbing repair)"
+            maxlength="80"
             show-word-limit
           />
         </el-form-item>
 
-        <el-form-item label="Response Description" prop="responseContent">
+        <el-form-item label="Service Type" prop="stype_id">
+          <el-select v-model="form.stype_id" placeholder="Please select service type" style="width: 100%">
+            <el-option
+              v-for="type in serviceTypes"
+              :key="type.id"
+              :label="type.name"
+              :value="type.id"
+            />
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="City" prop="cityID">
+          <el-select v-model="form.cityID" placeholder="Please select city" style="width: 100%">
+            <el-option
+              v-for="city in cities"
+              :key="city.id"
+              :label="city.name"
+              :value="city.id"
+            />
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="Description" prop="desc">
           <el-input
-            v-model="form.responseContent"
+            v-model="form.desc"
             type="textarea"
             :rows="5"
-            placeholder="Please describe your service capabilities and plan in detail"
-            maxlength="500"
+            placeholder="Please describe your service request in detail"
+            maxlength="300"
             show-word-limit
           />
         </el-form-item>
@@ -99,8 +103,8 @@
         </el-form-item>
 
         <el-form-item>
-          <el-button type="primary" :loading="loading" @click="handleSubmit">
-            Submit Response
+          <el-button type="primary" :loading="submitting" @click="handleSubmit">
+            Update Request
           </el-button>
           <el-button @click="handleReset">Reset</el-button>
           <el-button @click="router.back()">Cancel</el-button>
@@ -111,11 +115,11 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { getNeedDetail } from '@/api/serviceRequest'
-import { createResponse } from '@/api/serviceResponse'
+import { getNeedDetail, updateNeed } from '@/api/serviceRequest'
+import { SERVICE_TYPES, CITIES } from '@/utils/constants'
 import { useUserStore } from '@/stores/user'
 
 const route = useRoute()
@@ -123,8 +127,9 @@ const router = useRouter()
 const userStore = useUserStore()
 const formRef = ref(null)
 const loading = ref(false)
-const requestLoading = ref(false)
-const requestDetail = ref(null)
+const submitting = ref(false)
+const serviceTypes = ref(SERVICE_TYPES)
+const cities = ref(CITIES)
 
 // 文件上传相关
 const fileList = ref([])
@@ -148,19 +153,27 @@ const videoPreviews = computed(() => {
 })
 
 const form = reactive({
-  responseTitle: '',
-  responseContent: '',
-  fileList: '' // Will be populated with uploaded filenames
+  sr_title: '',
+  stype_id: null,
+  cityID: null,
+  desc: '',
+  file_list: '' // Will be populated with uploaded filenames
 })
 
 const rules = {
-  responseTitle: [
-    { required: true, message: 'Please enter response title', trigger: 'blur' },
-    { min: 5, max: 50, message: 'Title length must be 5-50 characters', trigger: 'blur' }
+  sr_title: [
+    { required: true, message: 'Please enter service title', trigger: 'blur' },
+    { min: 3, max: 80, message: 'Title length must be 3-80 characters', trigger: 'blur' }
   ],
-  responseContent: [
-    { required: true, message: 'Please enter response content', trigger: 'blur' },
-    { min: 10, max: 500, message: 'Content length must be 10-500 characters', trigger: 'blur' }
+  stype_id: [
+    { required: true, message: 'Please select service type', trigger: 'change' }
+  ],
+  cityID: [
+    { required: true, message: 'Please select city', trigger: 'change' }
+  ],
+  desc: [
+    { required: true, message: 'Please enter description', trigger: 'blur' },
+    { min: 10, max: 300, message: 'Description length must be 10-300 characters', trigger: 'blur' }
   ]
 }
 
@@ -240,19 +253,51 @@ const getVideoType = (url) => {
 
 // 更新表单中的文件列表
 const updateFileList = () => {
-  form.fileList = uploadedFiles.value.map(file => file.name).join(',')
+  form.file_list = uploadedFiles.value.map(file => file.name).join(',')
 }
 
-const loadRequestDetail = async () => {
-  requestLoading.value = true
+// 加载已有服务请求数据
+const loadRequestData = async () => {
+  loading.value = true
   try {
-    const res = await getNeedDetail(route.params.needId)
-    requestDetail.value = res.data
+    const res = await getNeedDetail(route.params.id)
+    const requestData = res.data
+    
+    // 填充表单数据
+    form.sr_title = requestData.sr_title
+    form.stype_id = requestData.stype_id
+    form.cityID = requestData.cityID
+    form.desc = requestData.desc
+    form.file_list = requestData.file_list || ''
+    
+    // 处理已有的文件
+    if (requestData.file_list) {
+      const fileNames = requestData.file_list.split(',')
+      for (const fileName of fileNames) {
+        if (fileName) {
+          const fullUrl = `${import.meta.env.VITE_API_BASE_URL}/api/v1/files/${fileName}`
+          const ext = fileName.split('.').pop().toLowerCase()
+          const fileType = ['jpg', 'jpeg', 'png', 'gif'].includes(ext) ? 'image' : 'video'
+          
+          uploadedFiles.value.push({
+            name: fileName,
+            url: fullUrl,
+            type: fileType
+          })
+          
+          // 添加到文件列表用于显示
+          fileList.value.push({
+            name: fileName,
+            url: fullUrl
+          })
+        }
+      }
+    }
   } catch (error) {
-    ElMessage.error('Failed to load request details')
+    ElMessage.error('Failed to load request data')
     router.back()
   } finally {
-    requestLoading.value = false
+    loading.value = false
   }
 }
 
@@ -265,20 +310,21 @@ const handleSubmit = async () => {
     return
   }
 
-  loading.value = true
+  submitting.value = true
   try {
-    await createResponse({
-      sr_id: route.params.needId,
-      title: form.responseTitle,
-      desc: form.responseContent,
-      file_list: form.fileList
+    await updateNeed(route.params.id, {
+      sr_title: form.sr_title,
+      stype_id: form.stype_id,
+      cityID: form.cityID,
+      desc: form.desc,
+      file_list: form.file_list
     })
-    ElMessage.success('Response submitted successfully')
-    router.push('/responses')
+    ElMessage.success('Service request updated successfully')
+    router.push(`/needs/${route.params.id}`)
   } catch (error) {
-    ElMessage.error('Failed to submit response')
+    ElMessage.error('Failed to update request: ' + (error.message || 'Unknown error'))
   } finally {
-    loading.value = false
+    submitting.value = false
   }
 }
 
@@ -286,31 +332,26 @@ const handleReset = () => {
   formRef.value?.resetFields()
   fileList.value = []
   uploadedFiles.value = []
-  form.fileList = ''
+  form.file_list = ''
+  
+  // 重新加载原始数据
+  loadRequestData()
 }
 
+// 组件挂载时加载数据
 onMounted(() => {
-  loadRequestDetail()
+  loadRequestData()
+  
+  // 强制更新组件以确保上传按钮显示
+  nextTick(() => {
+    // 组件已正确挂载
+  })
 })
 </script>
 
 <style scoped>
-.create-response-page {
+.edit-need-page {
   padding: 20px;
-}
-
-.request-card {
-  margin-bottom: 20px;
-}
-
-.request-card h3 {
-  margin: 0;
-  font-size: 18px;
-  color: #303133;
-}
-
-.form-card {
-  margin-bottom: 20px;
 }
 
 .card-header {
@@ -356,40 +397,5 @@ onMounted(() => {
 
 .video-preview-item {
   width: 200px;
-}
-
-.preview-video {
-  width: 100%;
-  height: 150px;
-}
-
-@media (max-width: 768px) {
-  :deep(.el-form) {
-    max-width: 100%;
-  }
-
-  :deep(.el-form-item) {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  :deep(.el-form-item__label) {
-    width: 100% !important;
-    text-align: left;
-    margin-bottom: 8px;
-  }
-  
-  .image-preview-item {
-    width: 100px;
-    height: 100px;
-  }
-  
-  .video-preview-item {
-    width: 100%;
-  }
-  
-  .preview-video {
-    height: 120px;
-  }
 }
 </style>

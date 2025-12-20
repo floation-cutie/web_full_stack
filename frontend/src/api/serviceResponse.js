@@ -37,3 +37,10 @@ export const cancelResponse = (id) => {
     method: 'put'
   })
 }
+
+export const deleteResponse = (id) => {
+  return request({
+    url: `/api/v1/service-responses/${id}`,
+    method: 'delete'
+  })
+}

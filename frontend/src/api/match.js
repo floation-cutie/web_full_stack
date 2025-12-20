@@ -1,10 +1,9 @@
 import request from '@/utils/request'
 
-export const acceptResponse = (data) => {
+export const acceptResponse = (response_id) => {
   return request({
-    url: '/api/v1/matches/accept',
-    method: 'post',
-    data
+    url: `/api/v1/match/accept/${response_id}`,
+    method: 'post'
   })
 }
 

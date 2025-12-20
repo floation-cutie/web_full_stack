@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     API_V1_PREFIX: str = "/api/v1"
 
     # Database
-    DATABASE_URL: str = "mysql+pymysql://root:password@localhost:3306/goodservices"
+    DATABASE_URL: str = "mysql+pymysql://root:rootpassword123@localhost:3307/goodservices"
 
     # Security
     SECRET_KEY: str = "your-secret-key-change-in-production-min-32-characters"
@@ -18,7 +18,7 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24  # 24 hours
 
     # CORS
-    CORS_ORIGINS: Union[str, List[str]] = ["http://localhost:5173", "http://localhost:3000"]
+    CORS_ORIGINS: Union[str, List[str]] = ["http://localhost","http://localhost:80","http://127.0.0.1","http://localhost:8000", "http://localhost:5173", "http://localhost:3000"]
 
     @field_validator('CORS_ORIGINS', mode='before')
     @classmethod

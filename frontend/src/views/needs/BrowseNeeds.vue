@@ -1,12 +1,8 @@
 <template>
-  <div class="need-list-page">
+  <div class="browse-needs-page">
     <el-card class="header-card">
       <div class="header-content">
-        <h2>My Service Requests</h2>
-        <el-button type="primary" @click="router.push('/needs/create')">
-          <el-icon><Plus /></el-icon>
-          Publish New Request
-        </el-button>
+        <h2>All Service Requests</h2>
       </div>
     </el-card>
 
@@ -22,11 +18,8 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="Status">
-          <el-select v-model="filterForm.status" placeholder="All" clearable style="width: 150px">
-            <el-option label="Published" :value="0" />
-            <el-option label="Cancelled" :value="-1" />
-          </el-select>
+        <el-form-item label="City">
+          <el-input v-model="filterForm.city" placeholder="Enter city" clearable style="width: 150px" />
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="handleSearch">Search</el-button>
@@ -56,32 +49,23 @@
             {{ formatDateTime(row.ps_begindate) }}
           </template>
         </el-table-column>
-        <el-table-column prop="ps_state" label="Status" width="100">
+        <el-table-column prop="psr_userid" label="Publisher" width="120">
           <template #default="{ row }">
-            <el-tag :type="row.ps_state === 0 ? 'success' : 'info'">
-              {{ row.ps_state === 0 ? 'Published' : 'Cancelled' }}
-            </el-tag>
+            {{ row.publisher_name || 'Unknown' }}
           </template>
         </el-table-column>
-        <el-table-column label="Actions" width="250" fixed="right">
+        <el-table-column label="Actions" width="200" fixed="right">
           <template #default="{ row }">
             <el-button type="primary" size="small" @click="viewDetail(row.sr_id)">
               View
             </el-button>
-            <el-button
-              v-if="row.ps_state === 0"
-              type="warning"
-              size="small"
-              @click="handleCancel(row.sr_id)"
+            <el-button 
+              type="success" 
+              size="small" 
+              @click="respondToRequest(row.sr_id)"
+              :disabled="row.psr_userid === currentUser.id"
             >
-              Cancel
-            </el-button>
-            <el-button
-              type="danger"
-              size="small"
-              @click="handleDelete(row.sr_id)"
-            >
-              Delete
+              Respond
             </el-button>
           </template>
         </el-table-column>
@@ -99,14 +83,15 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { ElMessage, ElMessageBox } from 'element-plus'
-import { Plus } from '@element-plus/icons-vue'
-import { getMyNeeds, cancelNeed, deleteNeed } from '@/api/serviceRequest'
-import { getServiceTypes } from '@/api/user'
+import { ElMessage } from 'element-plus'
+import { getAllNeeds } from '@/api/serviceRequest'
+import { useUserStore } from '@/stores/user'
 import Pagination from '@/components/Pagination.vue'
 import { SERVICE_TYPES } from '@/utils/constants'
 
 const router = useRouter()
+const userStore = useUserStore()
+const currentUser = userStore.userInfo
 
 const loading = ref(false)
 const tableData = ref([])
@@ -116,7 +101,7 @@ const serviceTypes = ref(SERVICE_TYPES)
 
 const filterForm = reactive({
   serviceTypeId: null,
-  status: null
+  city: null
 })
 
 const formatDateTime = (dateStr) => {
@@ -135,9 +120,17 @@ const loadData = async () => {
     const params = {
       page: pagination.page,
       size: pagination.size,
+      ps_state: 0, // Only show published requests
       ...filterForm
     }
-    const res = await getMyNeeds(params)
+    
+    // Map serviceTypeId to stype_id for API
+    if (params.serviceTypeId) {
+      params.stype_id = params.serviceTypeId
+      delete params.serviceTypeId
+    }
+    
+    const res = await getAllNeeds(params)
     tableData.value = res.data.items || []
     total.value = res.data.total || 0
   } catch (error) {
@@ -154,7 +147,7 @@ const handleSearch = () => {
 
 const handleReset = () => {
   filterForm.serviceTypeId = null
-  filterForm.status = null
+  filterForm.city = null
   pagination.page = 1
   loadData()
 }
@@ -163,56 +156,8 @@ const viewDetail = (id) => {
   router.push(`/needs/${id}`)
 }
 
-const handleCancel = async (id) => {
-  try {
-    await ElMessageBox.confirm(
-      'Are you sure you want to cancel this request?',
-      'Confirm Cancel',
-      {
-        confirmButtonText: 'Confirm',
-        cancelButtonText: 'Cancel',
-        type: 'warning'
-      }
-    )
-    await cancelNeed(id)
-    ElMessage.success('Request cancelled successfully')
-    loadData()
-  } catch (error) {
-    if (error !== 'cancel') {
-      ElMessage.error('Failed to cancel request')
-    }
-  }
-}
-
-const handleDelete = async (id) => {
-  try {
-    await ElMessageBox.confirm(
-      'Are you sure you want to delete this request? This action cannot be undone.',
-      'Confirm Delete',
-      {
-        confirmButtonText: 'Delete',
-        cancelButtonText: 'Cancel',
-        type: 'error'
-      }
-    )
-    const response = await deleteNeed(id)
-    console.log('Delete response:', response)
-    ElMessage.success('Request deleted successfully')
-    // 强制重新加载数据
-    await loadData()
-    // 如果数据仍然没有更新，强制刷新整个组件
-    if (tableData.value.some(item => item.sr_id === id)) {
-      console.log('Item still exists in table, forcing refresh')
-      // 重置分页并重新加载
-      pagination.page = 1
-      await loadData()
-    }
-  } catch (error) {
-    console.error('Delete error:', error)
-    if (error !== 'cancel') {
-      ElMessage.error('Failed to delete request: ' + (error.message || 'Unknown error'))
-    }
-  }
+const respondToRequest = (id) => {
+  router.push(`/responses/create/${id}`)
 }
 
 onMounted(() => {
@@ -221,7 +166,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.need-list-page {
+.browse-needs-page {
   padding: 20px;
 }
 

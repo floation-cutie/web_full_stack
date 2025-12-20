@@ -4,7 +4,23 @@
       <template #header>
         <div class="card-header">
           <h2>Service Request Details</h2>
-          <el-button @click="router.back()">Back</el-button>
+          <div>
+            <el-button 
+              v-if="isMyRequest"
+              type="primary" 
+              @click="handleEdit"
+            >
+              Edit
+            </el-button>
+            <el-button 
+              v-if="isMyRequest"
+              type="danger" 
+              @click="handleDelete"
+            >
+              Delete
+            </el-button>
+            <el-button @click="router.back()">Back</el-button>
+          </div>
         </div>
       </template>
 
@@ -32,6 +48,27 @@
         <el-descriptions-item label="Description" :span="2">
           {{ detail.desc }}
         </el-descriptions-item>
+        
+        <!-- Display Images -->
+        <el-descriptions-item label="Images" :span="2" v-if="imageFiles.length > 0">
+          <div class="image-preview-container">
+            <div v-for="(file, index) in imageFiles" :key="index" class="image-preview-item">
+              <img :src="getFullImageUrl(file)" :alt="file" class="preview-image" />
+            </div>
+          </div>
+        </el-descriptions-item>
+        
+        <!-- Display Videos -->
+        <el-descriptions-item label="Videos" :span="2" v-if="videoFiles.length > 0">
+          <div class="video-preview-container">
+            <div v-for="(file, index) in videoFiles" :key="index" class="video-preview-item">
+              <video controls class="preview-video">
+                <source :src="getFullImageUrl(file)" :type="getVideoType(file)">
+                Your browser does not support the video tag.
+              </video>
+            </div>
+          </div>
+        </el-descriptions-item>
       </el-descriptions>
     </el-card>
 
@@ -49,12 +86,24 @@
         style="width: 100%"
       >
         <el-table-column prop="response_id" label="Response ID" width="120" />
-        <el-table-column prop="responder_name" label="Responder" width="150" />
-        <el-table-column prop="response_content" label="Response Content" show-overflow-tooltip />
-        <el-table-column prop="response_phone" label="Contact Phone" width="150" />
-        <el-table-column prop="response_time" label="Response Time" width="180">
+        <el-table-column prop="responder_name" label="Responder" width="150">
+  <template #default="{ row }">
+    <span>{{ row.responder_name || '-' }}</span>
+  </template>
+</el-table-column>
+        <el-table-column prop="desc" label="Response Content" show-overflow-tooltip>
+  <template #default="{ row }">
+    <span>{{ row.desc || 'NO CONTENT' }}</span>
+  </template>
+</el-table-column>
+        <el-table-column prop="responder_phone" label="Contact Phone" width="150">
+  <template #default="{ row }">
+    <span>{{ row.responder_phone || '-' }}</span>
+  </template>
+</el-table-column>
+        <el-table-column prop="response_date" label="Response Time" width="180">
           <template #default="{ row }">
-            {{ formatDateTime(row.response_time) }}
+            {{ formatDateTime(row.response_date) }}
           </template>
         </el-table-column>
         <el-table-column prop="response_state" label="Status" width="100">
@@ -66,6 +115,12 @@
         </el-table-column>
         <el-table-column label="Actions" width="120" fixed="right">
           <template #default="{ row }">
+            <!-- Debug information -->
+            <div style="font-size: 12px; color: #999;">
+              RS:{{ row.response_state }} | 
+              MY:{{ isMyRequest ? 'Y' : 'N' }} |
+              Show:{{ row.response_state === 0 && isMyRequest ? 'Y' : 'N' }}
+            </div>
             <el-button
               v-if="row.response_state === 0 && isMyRequest"
               type="success"
@@ -91,7 +146,7 @@
 import { ref, reactive, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getNeedDetail, getNeedResponses } from '@/api/serviceRequest'
+import { getNeedDetail, getNeedResponses, deleteNeed } from '@/api/serviceRequest'
 import { acceptResponse } from '@/api/match'
 import { useUserStore } from '@/stores/user'
 import Pagination from '@/components/Pagination.vue'
@@ -109,7 +164,29 @@ const responsesTotal = ref(0)
 const responsesPagination = reactive({ page: 1, size: 10 })
 
 const isMyRequest = computed(() => {
-  return detail.value?.psr_userid === userStore.userInfo.buid
+  // 确保detail和userStore.userInfo都存在并且有正确的字段
+  if (!detail.value || !userStore.userInfo || !userStore.userInfo.id) {
+    return false
+  }
+  
+  // 转换为数字进行比较，以防一个是字符串一个是数字
+  const requestUserId = Number(detail.value.psr_userid)
+  const currentUserId = Number(userStore.userInfo.id)
+  
+  console.log('Checking isMyRequest:')
+  console.log('- detail.value:', detail.value)
+  console.log('- psr_userid:', detail.value.psr_userid, '(type:', typeof detail.value.psr_userid, ')')
+  console.log('- userStore.userInfo:', userStore.userInfo)
+  console.log('- userStore.userInfo.id:', userStore.userInfo.id, '(type:', typeof userStore.userInfo.id, ')')
+  console.log('- requestUserId:', requestUserId)
+  console.log('- currentUserId:', currentUserId)
+  console.log('- Comparison result:', requestUserId === currentUserId)
+  
+  return requestUserId === currentUserId
+})
+
+const hasResponses = computed(() => {
+  return responsesTotal.value > 0
 })
 
 const formatDateTime = (dateStr) => {
@@ -130,15 +207,102 @@ const getServiceTypeName = (typeId) => {
   return type ? type.name : typeId
 }
 
+// Media file handling
+const allFiles = computed(() => {
+  return detail.value?.file_list ? detail.value.file_list.split(',') : []
+})
+
+const imageFiles = computed(() => {
+  const imageExtensions = ['jpg', 'jpeg', 'png', 'gif']
+  return allFiles.value.filter(file => {
+    const ext = file.split('.').pop().toLowerCase()
+    return imageExtensions.includes(ext)
+  })
+})
+
+const videoFiles = computed(() => {
+  const videoExtensions = ['mp4', 'avi', 'mov', 'wmv']
+  return allFiles.value.filter(file => {
+    const ext = file.split('.').pop().toLowerCase()
+    return videoExtensions.includes(ext)
+  })
+})
+
+const getFullImageUrl = (filename) => {
+  return `${import.meta.env.VITE_API_BASE_URL}/api/v1/files/${filename}`
+}
+
+const getVideoType = (filename) => {
+  const ext = filename.split('.').pop().toLowerCase()
+  const typeMap = {
+    'mp4': 'video/mp4',
+    'avi': 'video/avi',
+    'mov': 'video/quicktime',
+    'wmv': 'video/x-ms-wmv'
+  }
+  return typeMap[ext] || 'video/mp4'
+}
+
 const loadDetail = async () => {
   loading.value = true
+  console.log('Loading detail for request ID:', route.params.id)
   try {
     const res = await getNeedDetail(route.params.id)
+    console.log('Response received:', res)
+    console.log('Response data:', res.data)
+    console.log('psr_userid in response:', res.data?.psr_userid)
     detail.value = res.data
+    console.log('Detail value after assignment:', detail.value)
   } catch (error) {
+    console.error('Error loading request details:', error)
     ElMessage.error('Failed to load request details')
   } finally {
     loading.value = false
+  }
+}
+
+const handleEdit = () => {
+  if (hasResponses.value) {
+    ElMessageBox.confirm(
+      'This request already has responses. Editing it may affect those who have responded. Do you want to continue?',
+      'Editing Request with Responses',
+      {
+        confirmButtonText: 'Continue',
+        cancelButtonText: 'Cancel',
+        type: 'warning'
+      }
+    ).then(() => {
+      router.push(`/needs/edit/${route.params.id}`)
+    }).catch(() => {
+      // User cancelled
+    })
+  } else {
+    router.push(`/needs/edit/${route.params.id}`)
+  }
+}
+
+const handleDelete = async () => {
+  try {
+    await ElMessageBox.confirm(
+      'Are you sure you want to delete this service request? This action cannot be undone. Note: This will permanently delete the request and all associated responses.',
+      'Confirm Delete',
+      {
+        confirmButtonText: 'Delete',
+        cancelButtonText: 'Cancel',
+        type: 'warning'
+      }
+    )
+    
+    const response = await deleteNeed(route.params.id)
+    console.log('Delete response:', response)
+    ElMessage.success('Service request deleted successfully')
+    // 返回到列表页
+    router.push('/needs')
+  } catch (error) {
+    console.error('Delete error:', error)
+    if (error !== 'cancel') {
+      ElMessage.error('Failed to delete service request: ' + (error.message || 'Unknown error'))
+    }
   }
 }
 
@@ -149,6 +313,8 @@ const loadResponses = async () => {
       page: responsesPagination.page,
       size: responsesPagination.size
     })
+    console.log('Responses loaded:', res)
+    console.log('Response items:', res.data.items)
     responsesList.value = res.data.items || []
     responsesTotal.value = res.data.total || 0
   } catch (error) {
@@ -169,10 +335,7 @@ const handleAccept = async (response) => {
         type: 'success'
       }
     )
-    await acceptResponse({
-      sr_id: route.params.id,
-      response_id: response.response_id
-    })
+    await acceptResponse(response.response_id)
     ElMessage.success('Response accepted successfully')
     loadResponses()
     loadDetail()
@@ -217,5 +380,40 @@ onMounted(() => {
 
 .card-header h3 {
   font-size: 18px;
+}
+
+/* Media Preview Styles */
+.image-preview-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.image-preview-item {
+  width: 150px;
+  height: 150px;
+  overflow: hidden;
+  border-radius: 4px;
+}
+
+.preview-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.video-preview-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.video-preview-item {
+  width: 200px;
+}
+
+.preview-video {
+  width: 100%;
+  height: 150px;
 }
 </style>

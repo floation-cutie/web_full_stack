@@ -4,10 +4,11 @@ from app.database import get_db
 from app.dependencies import get_current_user
 from app.schemas.service_response import ServiceResponseCreate, ServiceResponseUpdate, ServiceResponseResponse
 from app.crud import service_response as crud_service_response
+from typing import List
 
 router = APIRouter()
 
-@router.get("/my")
+@router.get("/my", response_model=dict)
 def get_my_service_responses(
     page: int = Query(1, ge=1),
     size: int = Query(10, ge=1, le=100),
@@ -18,32 +19,39 @@ def get_my_service_responses(
     result = crud_service_response.get_service_responses(
         db, page=page, size=size, user_id=current_user.id
     )
+    
+    # Validate and serialize each item in the result using the schema
+    serialized_items = [ServiceResponseResponse(**item).model_dump() for item in result["items"]]
+    result["items"] = serialized_items
 
     return {
         "code": 200,
         "data": result
     }
 
-@router.get("/{response_id}")
+@router.get("/{response_id}", response_model=dict)
 def get_service_response_by_id(
     response_id: int,
     db: Session = Depends(get_db),
     current_user = Depends(get_current_user)
 ):
     """Get a specific service response by ID"""
-    db_response = crud_service_response.get_service_response(db, response_id)
+    db_response = crud_service_response.get_service_response_with_details(db, response_id)
     if not db_response:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Service response not found"
         )
 
+    # Validate and serialize the response using the schema
+    response_data = ServiceResponseResponse(**db_response)
+
     return {
         "code": 200,
-        "data": db_response
+        "data": response_data.model_dump()
     }
 
-@router.get("")
+@router.get("", response_model=dict)
 def get_service_responses(
     page: int = Query(1, ge=1),
     size: int = Query(10, ge=1, le=100),
@@ -57,6 +65,10 @@ def get_service_responses(
         db, page=page, size=size, user_id=user_id,
         sr_id=sr_id, response_state=response_state
     )
+    
+    # Validate and serialize each item in the result using the schema
+    serialized_items = [ServiceResponseResponse(**item).model_dump() for item in result["items"]]
+    result["items"] = serialized_items
 
     return {
         "code": 200,

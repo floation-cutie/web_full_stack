@@ -1,5 +1,5 @@
 <template>
-  <div class="create-response-page">
+  <div class="edit-response-page">
     <el-card v-loading="requestLoading" class="request-card">
       <template #header>
         <h3>Service Request Information</h3>
@@ -21,8 +21,13 @@
     <el-card class="form-card">
       <template #header>
         <div class="card-header">
-          <h2>Submit Service Response</h2>
-          <el-button @click="router.back()">Back</el-button>
+          <h2>Edit Service Response</h2>
+          <div>
+            <el-button @click="handleDelete" type="danger" :loading="deleteLoading">
+              Delete Response
+            </el-button>
+            <el-button @click="router.back()">Back</el-button>
+          </div>
         </div>
       </template>
 
@@ -34,18 +39,18 @@
         label-position="right"
         style="max-width: 800px"
       >
-        <el-form-item label="Response Title" prop="responseTitle">
+        <el-form-item label="Title" prop="title">
           <el-input
-            v-model="form.responseTitle"
-            placeholder="Please enter a title for your response"
+            v-model="form.title"
+            placeholder="Please enter response title"
             maxlength="50"
             show-word-limit
           />
         </el-form-item>
 
-        <el-form-item label="Response Description" prop="responseContent">
+        <el-form-item label="Description" prop="desc">
           <el-input
-            v-model="form.responseContent"
+            v-model="form.desc"
             type="textarea"
             :rows="5"
             placeholder="Please describe your service capabilities and plan in detail"
@@ -100,7 +105,7 @@
 
         <el-form-item>
           <el-button type="primary" :loading="loading" @click="handleSubmit">
-            Submit Response
+            Update Response
           </el-button>
           <el-button @click="handleReset">Reset</el-button>
           <el-button @click="router.back()">Cancel</el-button>
@@ -113,9 +118,9 @@
 <script setup>
 import { ref, reactive, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { getNeedDetail } from '@/api/serviceRequest'
-import { createResponse } from '@/api/serviceResponse'
+import { getResponseDetail, updateResponse, deleteResponse } from '@/api/serviceResponse'
 import { useUserStore } from '@/stores/user'
 
 const route = useRoute()
@@ -123,6 +128,7 @@ const router = useRouter()
 const userStore = useUserStore()
 const formRef = ref(null)
 const loading = ref(false)
+const deleteLoading = ref(false)
 const requestLoading = ref(false)
 const requestDetail = ref(null)
 
@@ -148,27 +154,47 @@ const videoPreviews = computed(() => {
 })
 
 const form = reactive({
-  responseTitle: '',
-  responseContent: '',
-  fileList: '' // Will be populated with uploaded filenames
+  title: '',
+  desc: '',
+  file_list: ''
 })
 
 const rules = {
-  responseTitle: [
+  title: [
     { required: true, message: 'Please enter response title', trigger: 'blur' },
-    { min: 5, max: 50, message: 'Title length must be 5-50 characters', trigger: 'blur' }
+    { min: 1, max: 50, message: 'Title length must be 1-50 characters', trigger: 'blur' }
   ],
-  responseContent: [
-    { required: true, message: 'Please enter response content', trigger: 'blur' },
-    { min: 10, max: 500, message: 'Content length must be 10-500 characters', trigger: 'blur' }
+  desc: [
+    { required: true, message: 'Please enter response description', trigger: 'blur' },
+    { min: 10, max: 500, message: 'Description length must be 10-500 characters', trigger: 'blur' }
+  ],
+  file_list: [
+    { max: 400, message: 'File list cannot exceed 400 characters', trigger: 'blur' }
   ]
+}
+
+// 获取视频类型
+const getVideoType = (url) => {
+  const extension = url.split('.').pop().toLowerCase()
+  const videoTypes = {
+    mp4: 'video/mp4',
+    avi: 'video/avi',
+    mov: 'video/quicktime',
+    wmv: 'video/x-ms-wmv'
+  }
+  return videoTypes[extension] || 'video/mp4'
+}
+
+// 更新表单中的文件列表
+const updateFileList = () => {
+  form.file_list = uploadedFiles.value.map(file => file.name).join(',')
 }
 
 // 上传成功回调
 const handleUploadSuccess = (response, uploadFile, uploadFiles) => {
   if (response.code === 200) {
     // 构造完整的URL用于预览
-    const fullUrl = `${import.meta.env.VITE_API_BASE_URL}${response.data.url}`;
+    const fullUrl = `${import.meta.env.VITE_API_BASE_URL}${response.data.url}`
     
     // 添加到已上传文件列表
     uploadedFiles.value.push({
@@ -217,42 +243,67 @@ const beforeUpload = (rawFile) => {
   }
   
   if (rawFile.size > maxSize) {
-    ElMessage.error('File size exceeds 10MB!')
+    ElMessage.error('File size exceeds 10MB limit!')
     return false
   }
   
   return true
 }
 
-// 获取视频类型
-const getVideoType = (url) => {
-  // 从完整URL中提取文件名
-  const filename = url.split('/').pop();
-  const ext = filename.split('.').pop().toLowerCase()
-  const typeMap = {
-    'mp4': 'video/mp4',
-    'avi': 'video/avi',
-    'mov': 'video/quicktime',
-    'wmv': 'video/x-ms-wmv'
-  }
-  return typeMap[ext] || 'video/mp4'
-}
-
-// 更新表单中的文件列表
-const updateFileList = () => {
-  form.fileList = uploadedFiles.value.map(file => file.name).join(',')
-}
-
 const loadRequestDetail = async () => {
   requestLoading.value = true
   try {
-    const res = await getNeedDetail(route.params.needId)
+    // Get the service request details associated with this response
+    const responseRes = await getResponseDetail(route.params.id)
+    const requestId = responseRes.data.sr_id
+    const res = await getNeedDetail(requestId)
     requestDetail.value = res.data
   } catch (error) {
     ElMessage.error('Failed to load request details')
-    router.back()
   } finally {
     requestLoading.value = false
+  }
+}
+
+const loadData = async () => {
+  try {
+    const res = await getResponseDetail(route.params.id)
+    form.title = res.data.title || ''
+    form.desc = res.data.desc || ''
+    form.file_list = res.data.file_list || ''
+    
+    // 如果已有文件列表，初始化上传组件
+    if (res.data.file_list) {
+      const fileNames = res.data.file_list.split(',').filter(name => name.trim() !== '')
+      for (const fileName of fileNames) {
+        // 构造文件URL
+        const fileUrl = `${import.meta.env.VITE_API_BASE_URL}/api/v1/files/${fileName}`
+        
+        // 判断文件类型（简化版）
+        const isImage = /\.(jpg|jpeg|png|gif)$/i.test(fileName)
+        const isVideo = /\.(mp4|avi|mov|wmv)$/i.test(fileName)
+        const fileType = isImage ? 'image' : isVideo ? 'video' : 'other'
+        
+        // 添加到已上传文件列表
+        uploadedFiles.value.push({
+          name: fileName,
+          url: fileUrl,
+          type: fileType
+        })
+        
+        // 添加到文件列表用于显示
+        fileList.value.push({
+          name: fileName,
+          url: fileUrl
+        })
+      }
+    }
+    
+    // Load request details
+    await loadRequestDetail()
+  } catch (error) {
+    ElMessage.error('Failed to load response details')
+    router.back()
   }
 }
 
@@ -267,18 +318,46 @@ const handleSubmit = async () => {
 
   loading.value = true
   try {
-    await createResponse({
-      sr_id: route.params.needId,
-      title: form.responseTitle,
-      desc: form.responseContent,
-      file_list: form.fileList
+    await updateResponse(route.params.id, {
+      title: form.title,
+      desc: form.desc,
+      file_list: form.file_list
     })
-    ElMessage.success('Response submitted successfully')
+    ElMessage.success('Response updated successfully')
     router.push('/responses')
   } catch (error) {
-    ElMessage.error('Failed to submit response')
+    ElMessage.error('Failed to update response')
   } finally {
     loading.value = false
+  }
+}
+
+const handleDelete = async () => {
+  try {
+    await ElMessageBox.confirm(
+      'Are you sure you want to permanently delete this response? This action cannot be undone.',
+      'Confirm Delete',
+      {
+        confirmButtonText: 'Delete',
+        cancelButtonText: 'Cancel',
+        type: 'warning'
+      }
+    )
+    
+    deleteLoading.value = true
+    try {
+      await deleteResponse(route.params.id)
+      ElMessage.success('Response deleted successfully')
+      router.push('/responses')
+    } catch (error) {
+      ElMessage.error('Failed to delete response')
+    } finally {
+      deleteLoading.value = false
+    }
+  } catch (error) {
+    if (error !== 'cancel') {
+      ElMessage.error('Failed to delete response')
+    }
   }
 }
 
@@ -286,16 +365,19 @@ const handleReset = () => {
   formRef.value?.resetFields()
   fileList.value = []
   uploadedFiles.value = []
-  form.fileList = ''
+  form.file_list = ''
+  
+  // 重新加载原始数据
+  loadData()
 }
 
 onMounted(() => {
-  loadRequestDetail()
+  loadData()
 })
 </script>
 
 <style scoped>
-.create-response-page {
+.edit-response-page {
   padding: 20px;
 }
 
@@ -325,10 +407,7 @@ onMounted(() => {
   color: #303133;
 }
 
-:deep(.el-form-item__label) {
-  font-weight: 500;
-}
-
+/* 图片预览容器 */
 .image-preview-container {
   display: flex;
   flex-wrap: wrap;
@@ -336,18 +415,18 @@ onMounted(() => {
 }
 
 .image-preview-item {
-  width: 150px;
-  height: 150px;
-  overflow: hidden;
-  border-radius: 4px;
+  position: relative;
 }
 
 .preview-image {
-  width: 100%;
-  height: 100%;
+  width: 150px;
+  height: 150px;
   object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid #dcdfe6;
 }
 
+/* 视频预览容器 */
 .video-preview-container {
   display: flex;
   flex-wrap: wrap;
@@ -355,12 +434,18 @@ onMounted(() => {
 }
 
 .video-preview-item {
-  width: 200px;
+  position: relative;
 }
 
 .preview-video {
-  width: 100%;
+  width: 200px;
   height: 150px;
+  border-radius: 4px;
+  border: 1px solid #dcdfe6;
+}
+
+:deep(.el-form-item__label) {
+  font-weight: 500;
 }
 
 @media (max-width: 768px) {
@@ -379,17 +464,16 @@ onMounted(() => {
     margin-bottom: 8px;
   }
   
-  .image-preview-item {
+  .card-header {
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  
+  .preview-image,
+  .preview-video {
     width: 100px;
     height: 100px;
-  }
-  
-  .video-preview-item {
-    width: 100%;
-  }
-  
-  .preview-video {
-    height: 120px;
   }
 }
 </style>

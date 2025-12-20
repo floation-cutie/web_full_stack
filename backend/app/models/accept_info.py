@@ -7,7 +7,7 @@ from app.database import Base
 class AcceptInfo(Base):
     __tablename__ = "accept_info"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     srid = Column(Integer, ForeignKey("sr_info.sr_id", ondelete="RESTRICT"), nullable=False, index=True)
     psr_userid = Column(Integer, ForeignKey("buser_table.id", ondelete="RESTRICT"), nullable=False)
     response_id = Column(Integer, ForeignKey("response_info.response_id", ondelete="RESTRICT"), nullable=False, index=True)

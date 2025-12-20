@@ -6,5 +6,5 @@ class ServiceType(Base):
     __tablename__ = "service_type"
 
     id = Column(Integer, primary_key=True, index=True)
-    service_name = Column(String(50), nullable=False)
-    service_desc = Column(String(255))
+    typename = Column(String(50), nullable=False)
+    # service_desc doesn't exist in the database schema

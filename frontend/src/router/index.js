@@ -46,6 +46,18 @@ const routes = [
         meta: { requiresAuth: true }
       },
       {
+        path: 'needs/edit/:id',
+        name: 'EditNeed',
+        component: () => import('@/views/needs/EditNeed.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'browse-needs',
+        name: 'BrowseNeeds',
+        component: () => import('@/views/needs/BrowseNeeds.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
         path: 'responses',
         name: 'MyResponses',
         component: () => import('@/views/responses/MyResponses.vue'),
@@ -55,6 +67,12 @@ const routes = [
         path: 'responses/create/:needId',
         name: 'CreateResponse',
         component: () => import('@/views/responses/CreateResponse.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'responses/edit/:id',
+        name: 'EditResponse',
+        component: () => import('@/views/responses/EditResponse.vue'),
         meta: { requiresAuth: true }
       },
       {
