@@ -19,7 +19,14 @@
           </el-select>
         </el-form-item>
         <el-form-item label="City">
-          <el-input v-model="filterForm.city" placeholder="Enter city" clearable style="width: 150px" />
+          <el-select v-model="filterForm.cityId" placeholder="Select city" clearable style="width: 150px">
+            <el-option
+              v-for="city in cities"
+              :key="city.id"
+              :label="city.name"
+              :value="city.id"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="handleSearch">Search</el-button>
@@ -43,7 +50,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="desc" label="Description" show-overflow-tooltip />
-        <el-table-column prop="cityID" label="City" width="100" />
+        <el-table-column prop="city_name" label="City" width="100" />
         <el-table-column prop="ps_begindate" label="Start Date" width="180">
           <template #default="{ row }">
             {{ formatDateTime(row.ps_begindate) }}
@@ -87,7 +94,8 @@ import { ElMessage } from 'element-plus'
 import { getAllNeeds } from '@/api/serviceRequest'
 import { useUserStore } from '@/stores/user'
 import Pagination from '@/components/Pagination.vue'
-import { SERVICE_TYPES } from '@/utils/constants'
+import { getServiceTypes } from '@/api/user'
+import { CITIES } from '@/utils/constants'
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -97,11 +105,12 @@ const loading = ref(false)
 const tableData = ref([])
 const total = ref(0)
 const pagination = reactive({ page: 1, size: 10 })
-const serviceTypes = ref(SERVICE_TYPES)
+const serviceTypes = ref([])
+const cities = ref(CITIES)
 
 const filterForm = reactive({
   serviceTypeId: null,
-  city: null
+  cityId: null
 })
 
 const formatDateTime = (dateStr) => {
@@ -130,13 +139,35 @@ const loadData = async () => {
       delete params.serviceTypeId
     }
     
+    // Map cityId to city_id for API
+    if (params.cityId) {
+      params.city_id = params.cityId
+      delete params.cityId
+    }
+    
+    console.log('Sending request with params:', params)
+    
     const res = await getAllNeeds(params)
-    tableData.value = res.data.items || []
-    total.value = res.data.total || 0
+    console.log('Received response:', res)
+    
+    const data = res.data || res
+    
+    tableData.value = data.items || []
+    total.value = data.total || 0
   } catch (error) {
-    ElMessage.error('Failed to load data')
+    console.error('Error loading data:', error)
+    ElMessage.error(error.response?.data?.detail || 'Failed to load data')
   } finally {
     loading.value = false
+  }
+}
+
+const loadServiceTypes = async () => {
+  try {
+    const res = await getServiceTypes()
+    serviceTypes.value = res.data || []
+  } catch (error) {
+    ElMessage.error('Failed to load service types')
   }
 }
 
@@ -147,7 +178,7 @@ const handleSearch = () => {
 
 const handleReset = () => {
   filterForm.serviceTypeId = null
-  filterForm.city = null
+  filterForm.cityId = null
   pagination.page = 1
   loadData()
 }
@@ -162,6 +193,7 @@ const respondToRequest = (id) => {
 
 onMounted(() => {
   loadData()
+  loadServiceTypes()
 })
 </script>
 

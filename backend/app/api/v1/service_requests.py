@@ -19,31 +19,43 @@ def get_service_requests(
     db: Session = Depends(get_db),
     current_user = Depends(get_current_user)
 ):
+    # Log the received parameters for debugging
+    print(f"get_service_requests called with params: page={page}, size={size}, user_id={user_id}, stype_id={stype_id}, city_id={city_id}, ps_state={ps_state}")
+    
     result = crud_service_request.get_service_requests(
         db, page=page, size=size, user_id=user_id,
         stype_id=stype_id, city_id=city_id, ps_state=ps_state
     )
     
-    # Convert items to dictionaries and include publisher name
-    items_with_publisher = []
+    # Convert items to dictionaries and include publisher name and city name
+    items_with_details = []
     for item in result["items"]:
         # Convert the SQLAlchemy model object to a dictionary
         item_dict = {}
         for column in item.__table__.columns:
             item_dict[column.name] = getattr(item, column.name)
         
-        # Add publisher name if user relationship is loaded
+        # Add publisher name (using uname instead of bname)
         if hasattr(item, 'user') and item.user:
-            item_dict['publisher_name'] = item.user.bname
+            item_dict['publisher_name'] = item.user.uname
         else:
             # If user relationship is not loaded, query for the user name
             from app.models.user import BUser
             user = db.query(BUser).filter(BUser.id == item.psr_userid).first()
-            item_dict['publisher_name'] = user.bname if user else 'Unknown'
+            item_dict['publisher_name'] = user.uname if user else 'Unknown'
         
-        items_with_publisher.append(item_dict)
+        # Add city name
+        if hasattr(item, 'city') and item.city:
+            item_dict['city_name'] = item.city.cityName
+        else:
+            # If city relationship is not loaded, query for the city name
+            from app.models.city_info import CityInfo
+            city = db.query(CityInfo).filter(CityInfo.cityID == item.cityID).first()
+            item_dict['city_name'] = city.cityName if city else 'Unknown'
+        
+        items_with_details.append(item_dict)
 
-    result["items"] = items_with_publisher
+    result["items"] = items_with_details
 
     return {
         "code": 200,
@@ -91,14 +103,14 @@ def get_service_request(
     for column in db_request.__table__.columns:
         request_dict[column.name] = getattr(db_request, column.name)
     
-    # Add publisher name if user relationship is loaded
+    # Add publisher name if user relationship is loaded (using uname instead of bname)
     if hasattr(db_request, 'user') and db_request.user:
-        request_dict['publisher_name'] = db_request.user.bname
+        request_dict['publisher_name'] = db_request.user.uname
     else:
         # If user relationship is not loaded, query for the user name
         from app.models.user import BUser
         user = db.query(BUser).filter(BUser.id == db_request.psr_userid).first()
-        request_dict['publisher_name'] = user.bname if user else 'Unknown'
+        request_dict['publisher_name'] = user.uname if user else 'Unknown'
     
     # Add service type name if service_type relationship is loaded
     if hasattr(db_request, 'service_type') and db_request.service_type:

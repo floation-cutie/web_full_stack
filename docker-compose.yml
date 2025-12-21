@@ -32,7 +32,7 @@ services:
     container_name: goodservices-backend
     restart: unless-stopped
     environment:
-      DATABASE_URL: mysql+pymysql://${MYSQL_USER:-goodservices}:${MYSQL_PASSWORD:-password123}@mysql:3306/${MYSQL_DATABASE:-goodservices}
+      DATABASE_URL: mysql+pymysql://${MYSQL_USER:-goodservices}:${MYSQL_PASSWORD:-password123}@mysql:3306/${MYSQL_DATABASE:-goodservices}?charset=utf8
       SECRET_KEY: ${SECRET_KEY:-your-secret-key-change-in-production}
       ALGORITHM: ${ALGORITHM:-HS256}
       ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES:-30}

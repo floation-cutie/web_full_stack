@@ -10,7 +10,7 @@
       <el-form :inline="true" :model="queryForm" class="query-form">
         <el-form-item label="Start Month">
           <el-date-picker
-            v-model="queryForm.startMonth"
+            v-model="queryForm.start_month"
             type="month"
             placeholder="Select start month"
             format="YYYY-MM"
@@ -21,7 +21,7 @@
 
         <el-form-item label="End Month">
           <el-date-picker
-            v-model="queryForm.endMonth"
+            v-model="queryForm.end_month"
             type="month"
             placeholder="Select end month"
             format="YYYY-MM"
@@ -32,7 +32,7 @@
 
         <el-form-item label="City">
           <el-select
-            v-model="queryForm.cityId"
+            v-model="queryForm.city_id"
             placeholder="Select city"
             clearable
             style="width: 180px"
@@ -48,7 +48,7 @@
 
         <el-form-item label="Service Type">
           <el-select
-            v-model="queryForm.serviceTypeId"
+            v-model="queryForm.service_type_id"
             placeholder="Select service type"
             clearable
             style="width: 180px"
@@ -57,7 +57,7 @@
               v-for="type in serviceTypes"
               :key="type.id"
               :label="type.name"
-              :value="type.id"
+               :value="type.id"
             />
           </el-select>
         </el-form-item>
@@ -130,22 +130,23 @@ import * as echarts from 'echarts'
 import { Search } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { getMonthlyStats } from '@/api/stats'
-import { getCities, getServiceTypes } from '@/api/user'
+import { getServiceTypes } from '@/api/user'
+import { CITIES } from '@/utils/constants'
 
 const chartRef = ref(null)
 const loading = ref(false)
 const tableData = ref([])
-const cities = ref([])
 const serviceTypes = ref([])
+const cities = ref(CITIES)
 const pagination = ref({ page: 1, size: 10, total: 0 })
 
 let chartInstance = null
 
 const queryForm = ref({
-  startMonth: '',
-  endMonth: '',
-  cityId: null,
-  serviceTypeId: null
+  start_month: '',
+  end_month: '',
+  city_id: null,
+  service_type_id: null
 })
 
 onMounted(async () => {
@@ -165,11 +166,8 @@ const initChart = async () => {
 
 const loadFilterOptions = async () => {
   try {
-    const [citiesRes, typesRes] = await Promise.all([
-      getCities(),
-      getServiceTypes()
-    ])
-    cities.value = citiesRes.data || []
+    // Fetch service types from API
+    const typesRes = await getServiceTypes()
     serviceTypes.value = typesRes.data || []
   } catch (error) {
     ElMessage.error('Failed to load filter options')
@@ -177,47 +175,70 @@ const loadFilterOptions = async () => {
 }
 
 const initDefaultDates = () => {
+  console.log('=== Debug initDefaultDates ===')
   const now = new Date()
-  const endMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
+  console.log('Current date:', now)
+  
+  const end_month = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
+  console.log('End month:', end_month)
 
-  const startDate = new Date(now.getFullYear(), now.getMonth() - 5, 1)
-  const startMonth = `${startDate.getFullYear()}-${String(startDate.getMonth() + 1).padStart(2, '0')}`
+  // 计算开始日期，确保正确处理跨年情况
+  const startDate = new Date(now)
+  startDate.setMonth(startDate.getMonth() - 5)
+  const start_month = `${startDate.getFullYear()}-${String(startDate.getMonth() + 1).padStart(2, '0')}`
+  console.log('Start month:', start_month)
 
-  queryForm.value.startMonth = startMonth
-  queryForm.value.endMonth = endMonth
+  queryForm.value.start_month = start_month
+  queryForm.value.end_month = end_month
+  
+  console.log('Set queryForm values:', {
+    start_month: queryForm.value.start_month,
+    end_month: queryForm.value.end_month
+  })
 }
 
 const handleQuery = async () => {
-  if (!queryForm.value.startMonth || !queryForm.value.endMonth) {
+  console.log('=== Debug handleQuery ===')
+  console.log('queryForm.value:', queryForm.value)
+  console.log('start_month:', queryForm.value.start_month)
+  console.log('end_month:', queryForm.value.end_month)
+  
+  if (!queryForm.value.start_month || !queryForm.value.end_month) {
     ElMessage.warning('Please select month range')
+    console.log('Validation failed: missing month range')
     return
   }
 
-  if (queryForm.value.startMonth > queryForm.value.endMonth) {
+  if (queryForm.value.start_month > queryForm.value.end_month) {
     ElMessage.warning('Start month cannot be later than end month')
+    console.log('Validation failed: start month later than end month')
     return
   }
 
   loading.value = true
   try {
-    const res = await getMonthlyStats({
-      startMonth: queryForm.value.startMonth,
-      endMonth: queryForm.value.endMonth,
-      cityId: queryForm.value.cityId,
-      serviceTypeId: queryForm.value.serviceTypeId,
+    const params = {
+      start_month: queryForm.value.start_month,
+      end_month: queryForm.value.end_month,
+      city_id: queryForm.value.city_id,
+      service_type_id: queryForm.value.service_type_id,
       page: pagination.value.page,
       size: pagination.value.size
-    })
+    }
+    
+    console.log('Sending request with params:', params)
+    
+    const res = await getMonthlyStats(params)
 
     const data = res.data || res
 
     tableData.value = (data.items || []).map(item => ({
       month: item.month,
-      serviceType: item.service_type_name,
-      city: item.city_name,
-      publishedCount: item.published_count || 0,
-      completedCount: item.completed_count || 0,
-      successRate: calculateSuccessRate(item.completed_count, item.published_count)
+      serviceType: item.serviceTypeName || '', // 如果后端提供此数据
+      city: item.cityName || '', // 如果后端提供此数据
+      publishedCount: item.publishedCount || item.published_count || 0,
+      completedCount: item.completedCount || item.completed_count || 0,
+      successRate: calculateSuccessRate(item.completedCount || item.completed_count || 0, item.publishedCount || item.published_count || 0)
     }))
 
     pagination.value.total = data.total || 0
@@ -234,8 +255,8 @@ const updateChart = (chartData) => {
   if (!chartData) return
 
   const months = chartData.months || []
-  const published = chartData.published_counts || []
-  const completed = chartData.completed_counts || []
+  const published = chartData.published || []
+  const completed = chartData.completed || []
 
   const option = {
     title: {
@@ -338,8 +359,8 @@ const handleSizeChange = (size) => {
 
 const handleReset = () => {
   initDefaultDates()
-  queryForm.value.cityId = null
-  queryForm.value.serviceTypeId = null
+  queryForm.value.city_id = null
+  queryForm.value.service_type_id = null
   pagination.value.page = 1
   handleQuery()
 }

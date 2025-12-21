@@ -139,7 +139,8 @@ const loadData = async () => {
     const params = {
       page: pagination.page,
       size: pagination.size,
-      ...filterForm
+      // Map status to response_state for API
+      response_state: filterForm.status
     }
     const res = await getMyResponses(params)
     console.log('API Response:', res)

@@ -344,7 +344,7 @@ This is a required course feature. Implement with high priority.
         </el-form-item>
         <el-form-item label="End Month">
           <el-date-picker
-            v-model="queryForm.endMonth"
+            v-model="queryForm.end_month"
             type="month"
             placeholder="Select month"
             format="YYYY-MM"
@@ -398,7 +398,7 @@ import { getMonthlyStats } from '@/api/stats'
 const chartRef = ref(null)
 const queryForm = ref({
   startMonth: '',
-  endMonth: '',
+  end_month: '',
   cityId: null,
   serviceTypeId: null
 })

@@ -11,7 +11,7 @@ class ServiceRequest(Base):
     sr_title = Column(String(80), nullable=False)
     stype_id = Column(Integer, ForeignKey("service_type.id", ondelete="RESTRICT"), nullable=False, index=True)
     psr_userid = Column(Integer, ForeignKey("buser_table.id", ondelete="RESTRICT"), nullable=False, index=True)
-    cityID = Column(Integer, ForeignKey("city_info.id", ondelete="RESTRICT"), nullable=False)
+    cityID = Column(Integer, ForeignKey("city_info.cityID", ondelete="RESTRICT"), nullable=False)
     desc = Column(String(300), nullable=False)
     file_list = Column(String(300), nullable=False)
     ps_begindate = Column(DateTime, nullable=False)

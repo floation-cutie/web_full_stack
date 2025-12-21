@@ -5,6 +5,7 @@ from app.database import Base
 class CityInfo(Base):
     __tablename__ = "city_info"
 
-    id = Column(Integer, primary_key=True, index=True)
-    city_name = Column(String(50), nullable=False)
-    province = Column(String(50))
+    cityID = Column(Integer, primary_key=True, index=True)
+    cityName = Column(String(255))
+    provinceID = Column(Integer)
+    provinceName = Column(String(255))

@@ -119,14 +119,15 @@ import { ref, reactive, computed, onMounted, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { createNeed } from '@/api/serviceRequest'
-import { SERVICE_TYPES, CITIES } from '@/utils/constants'
+import { getCities, getServiceTypes } from '@/api/user'
+import { CITIES } from '@/utils/constants'
 import { useUserStore } from '@/stores/user'
 
 const router = useRouter()
 const userStore = useUserStore()
 const formRef = ref(null)
 const loading = ref(false)
-const serviceTypes = ref(SERVICE_TYPES)
+const serviceTypes = ref([])
 const cities = ref(CITIES)
 
 // 文件上传相关
@@ -290,7 +291,15 @@ const handleReset = () => {
 }
 
 // 组件挂载时确保正确初始化
-onMounted(() => {
+onMounted(async () => {
+  // 获取服务类型数据
+  try {
+    const res = await getServiceTypes()
+    serviceTypes.value = res.data || []
+  } catch (error) {
+    ElMessage.error('Failed to load service types')
+  }
+  
   // 强制更新组件以确保上传按钮显示
   nextTick(() => {
     // 组件已正确挂载

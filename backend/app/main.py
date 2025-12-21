@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
-from app.api.v1 import auth, user, service_requests, service_responses, match, stats, files
+from app.api.v1 import auth, user, service_requests, service_responses, match, stats, files, data
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -24,6 +24,7 @@ app.include_router(service_responses.router, prefix=f"{settings.API_V1_PREFIX}/s
 app.include_router(match.router, prefix=f"{settings.API_V1_PREFIX}/match", tags=["Service Matching"])
 app.include_router(stats.router, prefix=f"{settings.API_V1_PREFIX}/stats", tags=["Statistics"])
 app.include_router(files.router, prefix=f"{settings.API_V1_PREFIX}/files", tags=["File Management"])
+app.include_router(data.router, prefix=f"{settings.API_V1_PREFIX}", tags=["Data"])
 @app.get("/")
 def root():
     return {"message": "GoodServices API", "version": settings.VERSION}

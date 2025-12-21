@@ -32,9 +32,9 @@ def get_service_response_with_details(db: Session, response_id: int):
         
         if accept_info and accept_info.responder:
             print(f"DEBUG: Responder found: {accept_info.responder}")
-            response_dict['responder_name'] = accept_info.responder.bname
+            response_dict['responder_name'] = accept_info.responder.uname
             response_dict['responder_phone'] = accept_info.responder.phoneNo
-            print(f"DEBUG: Added responder info - name: {accept_info.responder.bname}, phone: {accept_info.responder.phoneNo}")
+            print(f"DEBUG: Added responder info - name: {accept_info.responder.uname}, phone: {accept_info.responder.phoneNo}")
     
     # Remove SQLAlchemy internal attributes
     response_dict.pop('_sa_instance_state', None)
@@ -78,15 +78,15 @@ def get_service_responses(db: Session, page: int = 1, size: int = 10, user_id: i
             
             if accept_info and accept_info.responder:
                 print(f"DEBUG: Responder found for item: {accept_info.responder}")
-                item_dict['responder_name'] = accept_info.responder.bname
+                item_dict['responder_name'] = accept_info.responder.uname
                 item_dict['responder_phone'] = accept_info.responder.phoneNo
-                print(f"DEBUG: Added responder info for item - name: {accept_info.responder.bname}, phone: {accept_info.responder.phoneNo}")
+                print(f"DEBUG: Added responder info for item - name: {accept_info.responder.uname}, phone: {accept_info.responder.phoneNo}")
         else:
             # For non-accepted responses, still include responder info from the response user
             # This helps with debugging and showing who responded
             responder = db.query(BUser).filter(BUser.id == item.response_userid).first()
             if responder:
-                item_dict['responder_name'] = responder.bname
+                item_dict['responder_name'] = responder.uname
                 item_dict['responder_phone'] = responder.phoneNo
         
         # Remove SQLAlchemy internal attributes

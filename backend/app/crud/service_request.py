@@ -9,19 +9,34 @@ def get_service_request(db: Session, request_id: int):
 
 def get_service_requests(db: Session, page: int = 1, size: int = 10, user_id: int = None,
                          stype_id: int = None, city_id: int = None, ps_state: int = None):
-    query = db.query(ServiceRequest)
-
+    # Log the received parameters for debugging
+    print(f"CRUD get_service_requests called with params: page={page}, size={size}, user_id={user_id}, stype_id={stype_id}, city_id={city_id}, ps_state={ps_state}")
+    
+    # Use joinedload to eagerly load relationships
+    from sqlalchemy.orm import joinedload
+    query = db.query(ServiceRequest).options(
+        joinedload(ServiceRequest.user),
+        joinedload(ServiceRequest.city),
+        joinedload(ServiceRequest.service_type)
+    )
+    
     if user_id is not None:
         query = query.filter(ServiceRequest.psr_userid == user_id)
+        print(f"Applied user_id filter: {user_id}")
     if stype_id is not None:
         query = query.filter(ServiceRequest.stype_id == stype_id)
+        print(f"Applied stype_id filter: {stype_id}")
     if city_id is not None:
         query = query.filter(ServiceRequest.cityID == city_id)
+        print(f"Applied city_id filter: {city_id}")
     if ps_state is not None:
         query = query.filter(ServiceRequest.ps_state == ps_state)
+        print(f"Applied ps_state filter: {ps_state}")
 
     total = query.count()
     items = query.offset((page - 1) * size).limit(size).all()
+    
+    print(f"Query result: total={total}, items_count={len(items)}")
 
     return {
         "items": items,

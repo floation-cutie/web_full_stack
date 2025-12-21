@@ -97,14 +97,14 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Plus } from '@element-plus/icons-vue'
 import { getMyNeeds, cancelNeed, deleteNeed } from '@/api/serviceRequest'
 import { getServiceTypes } from '@/api/user'
+import { useUserStore } from '@/stores/user'
 import Pagination from '@/components/Pagination.vue'
-import { SERVICE_TYPES } from '@/utils/constants'
 
 const router = useRouter()
 
@@ -112,7 +112,7 @@ const loading = ref(false)
 const tableData = ref([])
 const total = ref(0)
 const pagination = reactive({ page: 1, size: 10 })
-const serviceTypes = ref(SERVICE_TYPES)
+const serviceTypes = ref([])
 
 const filterForm = reactive({
   serviceTypeId: null,
@@ -137,13 +137,31 @@ const loadData = async () => {
       size: pagination.size,
       ...filterForm
     }
+    
+    // Map serviceTypeId to stype_id for API
+    if (params.serviceTypeId) {
+      params.stype_id = params.serviceTypeId
+      delete params.serviceTypeId
+    }
+    
     const res = await getMyNeeds(params)
-    tableData.value = res.data.items || []
-    total.value = res.data.total || 0
+    const data = res.data || res
+    
+    tableData.value = data.items || []
+    total.value = data.total || 0
   } catch (error) {
-    ElMessage.error('Failed to load data')
+    ElMessage.error(error.response?.data?.detail || 'Failed to load data')
   } finally {
     loading.value = false
+  }
+}
+
+const loadServiceTypes = async () => {
+  try {
+    const res = await getServiceTypes()
+    serviceTypes.value = res.data || []
+  } catch (error) {
+    ElMessage.error('Failed to load service types')
   }
 }
 
@@ -217,6 +235,7 @@ const handleDelete = async (id) => {
 
 onMounted(() => {
   loadData()
+  loadServiceTypes()
 })
 </script>
 

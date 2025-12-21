@@ -160,14 +160,15 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, computed } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getNeedDetail, getNeedResponses, deleteNeed } from '@/api/serviceRequest'
 import { acceptResponse, rejectResponse } from '@/api/match'
+import { getServiceTypes } from '@/api/user'
 import { useUserStore } from '@/stores/user'
 import Pagination from '@/components/Pagination.vue'
-import { RESPONSE_STATUS_TEXT, RESPONSE_STATUS_TYPE, SERVICE_TYPES } from '@/utils/constants'
+import { RESPONSE_STATUS_TEXT, RESPONSE_STATUS_TYPE } from '@/utils/constants'
 
 const route = useRoute()
 const router = useRouter()
@@ -179,6 +180,7 @@ const responsesLoading = ref(false)
 const responsesList = ref([])
 const responsesTotal = ref(0)
 const responsesPagination = reactive({ page: 1, size: 10 })
+const serviceTypes = ref([])
 
 const isMyRequest = computed(() => {
   // 确保detail和userStore.userInfo都存在并且有正确的字段
@@ -220,8 +222,8 @@ const getResponseStatusType = (status) => {
 }
 
 const getServiceTypeName = (typeId) => {
-  const type = SERVICE_TYPES.find(t => t.id === typeId)
-  return type ? type.name : typeId
+  const type = serviceTypes.value.find(t => t.id === typeId)
+  return type ? type.name : 'Unknown'
 }
 
 // Media file handling
@@ -432,9 +434,19 @@ const viewResponseDetail = (response) => {
   );
 }
 
-onMounted(() => {
-  loadDetail()
-  loadResponses()
+const loadServiceTypes = async () => {
+  try {
+    const res = await getServiceTypes()
+    serviceTypes.value = res.data || []
+  } catch (error) {
+    ElMessage.error('Failed to load service types')
+  }
+}
+
+onMounted(async () => {
+  await loadDetail()
+  await loadResponses()
+  await loadServiceTypes()
 })
 </script>
 

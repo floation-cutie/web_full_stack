@@ -14,6 +14,10 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 
 def get_password_hash(password: str) -> str:
     """Hash password using bcrypt (truncate to 72 bytes if needed)"""
+    # Handle None password
+    if password is None:
+        raise ValueError("Password cannot be None")
+    
     # BCrypt has a 72 byte limit, truncate if necessary
     password_bytes = password.encode('utf-8')
     if len(password_bytes) > 72:
