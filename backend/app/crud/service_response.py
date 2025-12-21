@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 from app.models.service_response import ServiceResponse
+from app.models.service_request import ServiceRequest
 from app.models.user import BUser
 from app.models.accept_info import AcceptInfo
 from app.schemas.service_response import ServiceResponseCreate, ServiceResponseUpdate
@@ -44,9 +45,10 @@ def get_service_response_with_details(db: Session, response_id: int):
     return response_dict
 
 def get_service_responses(db: Session, page: int = 1, size: int = 10, user_id: int = None,
-                          sr_id: int = None, response_state: int = None):
+                          sr_id: int = None, response_state: int = None, city_id: int = None):
     # Base query for service responses
-    query = db.query(ServiceResponse)
+    # Join with ServiceRequest to enable city filtering
+    query = db.query(ServiceResponse).join(ServiceRequest, ServiceResponse.sr_id == ServiceRequest.sr_id)
 
     if user_id is not None:
         query = query.filter(ServiceResponse.response_userid == user_id)
@@ -54,6 +56,8 @@ def get_service_responses(db: Session, page: int = 1, size: int = 10, user_id: i
         query = query.filter(ServiceResponse.sr_id == sr_id)
     if response_state is not None:
         query = query.filter(ServiceResponse.response_state == response_state)
+    if city_id is not None:
+        query = query.filter(ServiceRequest.cityID == city_id)
     
     total = query.count()
     items = query.offset((page - 1) * size).limit(size).all()

@@ -8,14 +8,17 @@
 
     <el-card class="filter-card">
       <el-form :inline="true" :model="filterForm">
-        <el-form-item label="Status">
-          <el-select v-model="filterForm.status" placeholder="All" clearable style="width: 150px">
-            <el-option label="Pending" :value="0" />
-            <el-option label="Accepted" :value="1" />
-            <el-option label="Rejected" :value="2" />
-            <el-option label="Cancelled" :value="3" />
+        <el-form-item label="City">
+          <el-select v-model="filterForm.cityId" placeholder="Select city" clearable style="width: 150px">
+            <el-option
+              v-for="city in cities"
+              :key="city.id"
+              :label="city.name"
+              :value="city.id"
+            />
           </el-select>
         </el-form-item>
+        
         <el-form-item>
           <el-button type="primary" @click="handleSearch">Search</el-button>
           <el-button @click="handleReset">Reset</el-button>
@@ -107,7 +110,7 @@ import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getMyResponses, cancelResponse, deleteResponse } from '@/api/serviceResponse'
 import Pagination from '@/components/Pagination.vue'
-import { RESPONSE_STATUS_TEXT, RESPONSE_STATUS_TYPE } from '@/utils/constants'
+import { RESPONSE_STATUS_TEXT, RESPONSE_STATUS_TYPE, CITIES } from '@/utils/constants'
 
 const router = useRouter()
 
@@ -117,8 +120,10 @@ const total = ref(0)
 const pagination = reactive({ page: 1, size: 10 })
 
 const filterForm = reactive({
-  status: null
+  cityId: null
 })
+
+const cities = ref(CITIES)
 
 const formatDateTime = (dateStr) => {
   if (!dateStr) return ''
@@ -139,8 +144,8 @@ const loadData = async () => {
     const params = {
       page: pagination.page,
       size: pagination.size,
-      // Map status to response_state for API
-      response_state: filterForm.status
+      // Map cityId to city_id for API
+      city_id: filterForm.cityId
     }
     const res = await getMyResponses(params)
     console.log('API Response:', res)
@@ -162,7 +167,7 @@ const handleSearch = () => {
 }
 
 const handleReset = () => {
-  filterForm.status = null
+  filterForm.cityId = null
   pagination.page = 1
   loadData()
 }

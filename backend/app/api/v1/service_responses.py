@@ -12,12 +12,13 @@ router = APIRouter()
 def get_my_service_responses(
     page: int = Query(1, ge=1),
     size: int = Query(10, ge=1, le=100),
+    city_id: int = Query(None),
     db: Session = Depends(get_db),
     current_user = Depends(get_current_user)
 ):
     """Get current user's service responses"""
     result = crud_service_response.get_service_responses(
-        db, page=page, size=size, user_id=current_user.id
+        db, page=page, size=size, user_id=current_user.id, city_id=city_id
     )
     
     # Validate and serialize each item in the result using the schema
@@ -58,12 +59,13 @@ def get_service_responses(
     user_id: int = Query(None),
     sr_id: int = Query(None),
     response_state: int = Query(None),
+    city_id: int = Query(None),
     db: Session = Depends(get_db),
     current_user = Depends(get_current_user)
 ):
     result = crud_service_response.get_service_responses(
         db, page=page, size=size, user_id=user_id,
-        sr_id=sr_id, response_state=response_state
+        sr_id=sr_id, response_state=response_state, city_id=city_id
     )
     
     # Validate and serialize each item in the result using the schema

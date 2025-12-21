@@ -22,12 +22,17 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="Status">
-          <el-select v-model="filterForm.status" placeholder="All" clearable style="width: 150px">
-            <el-option label="Published" :value="0" />
-            <el-option label="Cancelled" :value="-1" />
+        <el-form-item label="City">
+          <el-select v-model="filterForm.cityId" placeholder="Select city" clearable style="width: 150px">
+            <el-option
+              v-for="city in cities"
+              :key="city.id"
+              :label="city.name"
+              :value="city.id"
+            />
           </el-select>
         </el-form-item>
+        
         <el-form-item>
           <el-button type="primary" @click="handleSearch">Search</el-button>
           <el-button @click="handleReset">Reset</el-button>
@@ -105,6 +110,7 @@ import { getMyNeeds, cancelNeed, deleteNeed } from '@/api/serviceRequest'
 import { getServiceTypes } from '@/api/user'
 import { useUserStore } from '@/stores/user'
 import Pagination from '@/components/Pagination.vue'
+import { CITIES } from '@/utils/constants'
 
 const router = useRouter()
 
@@ -116,8 +122,10 @@ const serviceTypes = ref([])
 
 const filterForm = reactive({
   serviceTypeId: null,
-  status: null
+  cityId: null
 })
+
+const cities = ref(CITIES)
 
 const formatDateTime = (dateStr) => {
   if (!dateStr) return ''
@@ -142,6 +150,12 @@ const loadData = async () => {
     if (params.serviceTypeId) {
       params.stype_id = params.serviceTypeId
       delete params.serviceTypeId
+    }
+    
+    // Map cityId to city_id for API
+    if (params.cityId) {
+      params.city_id = params.cityId
+      delete params.cityId
     }
     
     const res = await getMyNeeds(params)
@@ -172,7 +186,7 @@ const handleSearch = () => {
 
 const handleReset = () => {
   filterForm.serviceTypeId = null
-  filterForm.status = null
+  filterForm.cityId = null
   pagination.page = 1
   loadData()
 }

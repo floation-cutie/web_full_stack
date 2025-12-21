@@ -66,11 +66,15 @@ def get_service_requests(
 def get_my_service_requests(
     page: int = Query(1, ge=1),
     size: int = Query(10, ge=1, le=100),
+    stype_id: int = Query(None),
+    city_id: int = Query(None),
+    ps_state: int = Query(None),
     db: Session = Depends(get_db),
     current_user = Depends(get_current_user)
 ):
     result = crud_service_request.get_service_requests(
-        db, page=page, size=size, user_id=current_user.id
+        db, page=page, size=size, user_id=current_user.id,
+        stype_id=stype_id, city_id=city_id, ps_state=ps_state
     )
 
     return {
