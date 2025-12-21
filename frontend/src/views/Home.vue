@@ -8,32 +8,46 @@
     </div>
 
     <el-row :gutter="20" class="action-cards">
-      <el-col :xs="24" :sm="12" :md="6">
+      <el-col :xs="24" :sm="12" :md="4">
         <el-card class="action-card" shadow="hover" @click="router.push('/needs/create')">
           <el-icon :size="48" color="#409EFF"><Plus /></el-icon>
           <h3>Publish Need</h3>
           <p>Post a service request</p>
         </el-card>
       </el-col>
-      <el-col :xs="24" :sm="12" :md="6">
+      <el-col :xs="24" :sm="12" :md="4">
         <el-card class="action-card" shadow="hover" @click="router.push('/needs')">
           <el-icon :size="48" color="#67C23A"><Document /></el-icon>
           <h3>My Needs</h3>
           <p>View my service requests</p>
         </el-card>
       </el-col>
-      <el-col :xs="24" :sm="12" :md="6">
+      <el-col :xs="24" :sm="12" :md="4">
         <el-card class="action-card" shadow="hover" @click="router.push('/responses')">
           <el-icon :size="48" color="#E6A23C"><ChatDotRound /></el-icon>
           <h3>My Responses</h3>
           <p>View my service responses</p>
         </el-card>
       </el-col>
-      <el-col :xs="24" :sm="12" :md="6">
+      <el-col :xs="24" :sm="12" :md="4">
         <el-card class="action-card" shadow="hover" @click="router.push('/stats')">
           <el-icon :size="48" color="#F56C6C"><DataAnalysis /></el-icon>
           <h3>Statistics</h3>
           <p>View service statistics</p>
+        </el-card>
+      </el-col>
+      <el-col :xs="24" :sm="12" :md="4">
+        <el-card class="action-card" shadow="hover" @click="router.push('/browse-needs')">
+          <el-icon :size="48" color="#909399"><Search /></el-icon>
+          <h3>Browse Needs</h3>
+          <p>Find service requests</p>
+        </el-card>
+      </el-col>
+      <el-col :xs="24" :sm="12" :md="4">
+        <el-card class="action-card" shadow="hover" @click="router.push('/profile')">
+          <el-icon :size="48" color="#409EFF"><User /></el-icon>
+          <h3>My Profile</h3>
+          <p>Manage your profile</p>
         </el-card>
       </el-col>
     </el-row>
@@ -46,7 +60,9 @@ import {
   Plus,
   Document,
   ChatDotRound,
-  DataAnalysis
+  DataAnalysis,
+  Search,
+  User
 } from '@element-plus/icons-vue'
 
 const router = useRouter()

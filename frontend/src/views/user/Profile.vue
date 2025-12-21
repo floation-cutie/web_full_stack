@@ -133,11 +133,11 @@
             label-width="140px"
             label-position="right"
           >
-            <el-form-item label="Current Password" prop="currentPassword">
+            <el-form-item label="Old Password" prop="currentPassword">
               <el-input
                 v-model="passwordForm.currentPassword"
                 type="password"
-                placeholder="Enter current password"
+                placeholder="Enter old password"
                 :prefix-icon="Lock"
                 show-password
               />
@@ -194,7 +194,8 @@ import {
   Edit
 } from '@element-plus/icons-vue'
 import { useUserStore } from '@/stores/user'
-import { getUserProfile, updateUserProfile, changePassword, getCities } from '@/api/user'
+import { getUserProfile, updateUserProfile, changePassword } from '@/api/user'
+import { CITIES } from '@/utils/constants'
 
 const userStore = useUserStore()
 const profileFormRef = ref(null)
@@ -202,7 +203,7 @@ const passwordFormRef = ref(null)
 
 const loading = ref(false)
 const passwordLoading = ref(false)
-const cities = ref([])
+const cities = ref(CITIES)
 
 const profileForm = reactive({
   username: '',
@@ -277,18 +278,8 @@ const passwordRules = {
 }
 
 onMounted(async () => {
-  await loadCities()
   await loadProfileData()
 })
-
-const loadCities = async () => {
-  try {
-    const res = await getCities()
-    cities.value = res.data || []
-  } catch (error) {
-    ElMessage.error('Failed to load cities')
-  }
-}
 
 const loadProfileData = async () => {
   try {
@@ -352,7 +343,7 @@ const handleChangePassword = async () => {
   passwordLoading.value = true
   try {
     await changePassword({
-      current_password: passwordForm.currentPassword,
+      old_password: passwordForm.currentPassword,
       new_password: passwordForm.newPassword
     })
     ElMessage.success('Password changed successfully')

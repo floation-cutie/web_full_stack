@@ -10,9 +10,20 @@ router = APIRouter()
 
 @router.get("/me")
 def get_current_user_info(current_user = Depends(get_current_user)):
+    # Convert user object to dict and add statistics
+    user_dict = current_user.__dict__.copy()
+    
+    # Add statistics to the user data
+    user_dict['service_requests_count'] = current_user.service_requests_count
+    user_dict['service_responses_count'] = current_user.service_responses_count
+    user_dict['completed_services_count'] = current_user.completed_services_count
+    
+    # Remove SQLAlchemy internal attributes
+    user_dict.pop('_sa_instance_state', None)
+    
     return {
         "code": 200,
-        "data": current_user
+        "data": user_dict
     }
 
 @router.put("/me")

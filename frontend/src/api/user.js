@@ -2,14 +2,14 @@ import request from '@/utils/request'
 
 export const getUserProfile = () => {
   return request({
-    url: '/api/v1/users/profile',
+    url: '/api/v1/users/me',
     method: 'get'
   })
 }
 
 export const updateUserProfile = (data) => {
   return request({
-    url: '/api/v1/users/profile',
+    url: '/api/v1/users/me',
     method: 'put',
     data
   })
@@ -17,8 +17,8 @@ export const updateUserProfile = (data) => {
 
 export const changePassword = (data) => {
   return request({
-    url: '/api/v1/users/change-password',
-    method: 'post',
+    url: '/api/v1/users/me/password',
+    method: 'put',
     data
   })
 }
