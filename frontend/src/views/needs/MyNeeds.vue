@@ -95,7 +95,7 @@
       <Pagination
         v-model="pagination"
         :total="total"
-        @change="loadData"
+        @change="handlePaginationChange"
       />
     </el-card>
   </div>
@@ -245,6 +245,12 @@ const handleDelete = async (id) => {
       ElMessage.error('Failed to delete request: ' + (error.message || 'Unknown error'))
     }
   }
+}
+
+const handlePaginationChange = ({ page, size }) => {
+  pagination.page = page
+  pagination.size = size
+  loadData()
 }
 
 onMounted(() => {

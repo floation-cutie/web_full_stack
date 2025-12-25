@@ -81,7 +81,7 @@
       <Pagination
         v-model="pagination"
         :total="total"
-        @change="loadData"
+        @change="handlePaginationChange"
       />
     </el-card>
   </div>
@@ -189,6 +189,12 @@ const viewDetail = (id) => {
 
 const respondToRequest = (id) => {
   router.push(`/responses/create/${id}`)
+}
+
+const handlePaginationChange = ({ page, size }) => {
+  pagination.page = page
+  pagination.size = size
+  loadData()
 }
 
 onMounted(() => {

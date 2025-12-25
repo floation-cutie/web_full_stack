@@ -14,8 +14,8 @@ services:
       - "${MYSQL_PORT:-3307}:3306"
     volumes:
       - mysql_data:/var/lib/mysql
-      - ./goodservices.sql:/docker-entrypoint-initdb.d/01-schema.sql
-      - ./db_optimization.sql:/docker-entrypoint-initdb.d/02-optimization.sql
+      - ./database/schema/goodservices.sql:/docker-entrypoint-initdb.d/01-schema.sql
+      - ./database/schema/db_optimization.sql:/docker-entrypoint-initdb.d/02-optimization.sql
     networks:
       - goodservices-network
     healthcheck:
