@@ -22,7 +22,7 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- ----------------------------
 DROP TABLE IF EXISTS `accept_info`;
 CREATE TABLE `accept_info`  (
-  `id` int(0) NOT NULL COMMENT '服务成功记录标识',
+  `id` int(0) NOT NULL AUTO_INCREMENT COMMENT '服务成功记录标识',
   `srid` int(0) NOT NULL COMMENT '服务需求标识',
   `psr_userid` int(0) NOT NULL COMMENT '发布需求用户标识',
   `response_id` int(0) NOT NULL COMMENT '服务响应标识',
