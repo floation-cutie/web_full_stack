@@ -286,12 +286,12 @@ const loadProfileData = async () => {
     const res = await getUserProfile()
     const data = res.data || res
 
-    profileForm.username = data.username || userStore.userInfo?.username || ''
-    profileForm.phoneNo = data.phone_no || data.phoneNo || ''
+    profileForm.username = data.uname
+    profileForm.phoneNo = data.phoneNo
     profileForm.idno = data.idno
-    profileForm.realName = data.bname || data.real_name || data.realName || ''
-    profileForm.cityId = data.city_id || data.cityId || null
-    profileForm.address = data.address || ''
+    profileForm.realName = data.bname
+    profileForm.cityId = data.cityID
+    profileForm.address = data.address
 
     accountStats.serviceRequests = data.service_requests_count || 0
     accountStats.serviceResponses = data.service_responses_count || 0
@@ -315,7 +315,7 @@ const handleUpdateProfile = async () => {
     await updateUserProfile({
       phoneNo: profileForm.phoneNo,
       bname: profileForm.realName,
-      city_id: profileForm.cityId,
+      cityID: profileForm.cityId,
       address: profileForm.address
     })
     ElMessage.success('Profile updated successfully')
