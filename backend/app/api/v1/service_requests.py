@@ -166,10 +166,10 @@ def update_service_request(
         )
 
     # Check if the service request has any responses
-    if crud_service_response.has_responses(db, request_id):
+    if db_request.ps_state != 0:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Cannot modify a request that has responses"
+            detail="Current state does not allow modification." # Cannot modify unless state is 'Published'
         )
 
     updated_request = crud_service_request.update_service_request(db, request_id, request_update)
@@ -197,6 +197,12 @@ def cancel_service_request(
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Not authorized to cancel this request"
+        )
+        
+    if db_request.ps_state != 0:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Current state does not allow cancellation." # Cannot cancel unless state is 'Published'
         )
 
     db_request.ps_state = -1
@@ -260,6 +266,12 @@ def delete_service_request(
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Not authorized to delete this request"
+            )
+            
+        if db_request.ps_state != 0:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Current state does not allow deletion." # Cannot delete unless state is 'Published'
             )
 
         # Create a copy of the request data before deletion

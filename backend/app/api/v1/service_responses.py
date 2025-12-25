@@ -4,6 +4,7 @@ from app.database import get_db
 from app.dependencies import get_current_user
 from app.schemas.service_response import ServiceResponseCreate, ServiceResponseUpdate, ServiceResponseResponse
 from app.crud import service_response as crud_service_response
+from app.crud import service_request as crud_service_request
 from typing import List
 
 router = APIRouter()
@@ -85,6 +86,12 @@ def create_service_response(
 ):
     db_response = crud_service_response.create_service_response(db, response, current_user.id)
 
+    service_request = crud_service_request.get_service_request(db, db_response.sr_id)
+    if service_request and service_request.ps_state == 0:
+        service_request.ps_state = 1  # Update to 'In Response'
+        db.commit()
+        db.refresh(service_request)
+    
     return {
         "code": 200,
         "message": "Service response created successfully",

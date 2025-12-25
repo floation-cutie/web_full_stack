@@ -36,6 +36,14 @@ def accept_service(
     
     accept_info = crud_accept.accept_service_response(db, response_id)
     
+    service_response = get_service_response(db, response_id)
+    if service_response:
+        service_request = get_service_request(db, service_response.sr_id)
+        if service_request:
+            service_request.ps_state = 2  # Update to 'Completed'
+            db.commit()
+            db.refresh(service_request)
+            
     return {
         "code": 200,
         "message": "Service response accepted successfully",

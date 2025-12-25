@@ -9,6 +9,7 @@
               v-if="isMyRequest"
               type="primary" 
               @click="handleEdit"
+              :disabled="hasResponses"
             >
               Edit
             </el-button>
@@ -16,6 +17,7 @@
               v-if="isMyRequest"
               type="danger" 
               @click="handleDelete"
+              :disabled="hasResponses"
             >
               Delete
             </el-button>
@@ -35,9 +37,11 @@
           {{ getServiceTypeName(detail.stype_id) }}
         </el-descriptions-item>
         <el-descriptions-item label="Status">
-          <el-tag :type="detail.ps_state === 0 ? 'success' : 'info'">
-            {{ detail.ps_state === 0 ? 'Published' : 'Cancelled' }}
-          </el-tag>
+          <el-tag v-if="detail.ps_state === 0" type="success">Published</el-tag>
+          <el-tag v-else-if="detail.ps_state === 1" type="warning">Responded</el-tag>
+          <el-tag v-else-if="detail.ps_state === 2" type="info">Completed</el-tag>
+          <el-tag v-else-if="detail.ps_state === -1" type="danger">Cancelled</el-tag>
+          <el-tag v-else>Unknown</el-tag>
         </el-descriptions-item>
         <el-descriptions-item label="Start Date">
           {{ formatDateTime(detail.ps_begindate) }}

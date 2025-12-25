@@ -65,11 +65,13 @@
             {{ formatDateTime(row.ps_begindate) }}
           </template>
         </el-table-column>
-        <el-table-column prop="ps_state" label="Status" width="100">
+        <el-table-column prop="ps_state" label="Status" width="120">
           <template #default="{ row }">
-            <el-tag :type="row.ps_state === 0 ? 'success' : 'info'">
-              {{ row.ps_state === 0 ? 'Published' : 'Cancelled' }}
-            </el-tag>
+            <el-tag v-if="row.ps_state === 0" type="success">Published</el-tag>
+            <el-tag v-else-if="row.ps_state === 1" type="warning">Responded</el-tag>
+            <el-tag v-else-if="row.ps_state === 2" type="info">Completed</el-tag>
+            <el-tag v-else-if="row.ps_state === -1" type="danger">Cancelled</el-tag>
+            <el-tag v-else>Unknown</el-tag>
           </template>
         </el-table-column>
         <el-table-column label="Actions" width="250" fixed="right">
@@ -82,13 +84,16 @@
               type="warning"
               size="small"
               @click="handleCancel(row.sr_id)"
+              :disabled="row.ps_state !== 0"
             >
               Cancel
             </el-button>
             <el-button
+              v-if="row.ps_state === 0"
               type="danger"
               size="small"
               @click="handleDelete(row.sr_id)"
+              :disabled="row.ps_state !== 0"
             >
               Delete
             </el-button>

@@ -169,7 +169,7 @@ CREATE TABLE `sr_info`  (
   `desc` varchar(300) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL COMMENT '服务描述',
   `file_list` varchar(300) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL COMMENT '图片等资源文件名称列表',
   `ps_begindate` datetime(0) NOT NULL COMMENT '开始日期，默认为提交日期',
-  `ps_state` int(0) NOT NULL COMMENT '状态，0：已发布；-1：已取消',
+  `ps_state` int(0) NOT NULL COMMENT '状态，0：已发布；1：响应中；2：已完成；-1：已取消',
   `ps_updatedate` datetime(0) NULL DEFAULT NULL COMMENT '修改日期',
   PRIMARY KEY (`sr_id`) USING BTREE,
   INDEX `f1`(`psr_userid`) USING BTREE,
