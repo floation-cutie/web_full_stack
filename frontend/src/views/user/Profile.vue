@@ -288,8 +288,8 @@ const loadProfileData = async () => {
 
     profileForm.username = data.username || userStore.userInfo?.username || ''
     profileForm.phoneNo = data.phone_no || data.phoneNo || ''
-    profileForm.idno = data.idno || ''
-    profileForm.realName = data.real_name || data.realName || ''
+    profileForm.idno = data.idno
+    profileForm.realName = data.bname || data.real_name || data.realName || ''
     profileForm.cityId = data.city_id || data.cityId || null
     profileForm.address = data.address || ''
 
@@ -313,8 +313,8 @@ const handleUpdateProfile = async () => {
   loading.value = true
   try {
     await updateUserProfile({
-      phone_no: profileForm.phoneNo,
-      real_name: profileForm.realName,
+      phoneNo: profileForm.phoneNo,
+      bname: profileForm.realName,
       city_id: profileForm.cityId,
       address: profileForm.address
     })
