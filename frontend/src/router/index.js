@@ -79,7 +79,7 @@ const routes = [
         path: 'stats',
         name: 'Statistics',
         component: () => import('@/views/stats/Statistics.vue'),
-        meta: { requiresAuth: true }
+        meta: { requiresAuth: true, requiresAdmin: true }
       },
       {
         path: 'profile',
@@ -101,6 +101,9 @@ router.beforeEach((to, from, next) => {
 
   if (to.meta.requiresAuth && !userStore.token) {
     next('/login')
+  } else if (to.meta.requiresAdmin && userStore.userInfo?.userlvl !== 'admin') {
+    // 如果路由需要管理员权限但用户不是管理员，重定向到首页
+    next('/home')
   } else if (to.path === '/login' && userStore.token) {
     next('/home')
   } else {

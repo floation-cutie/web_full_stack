@@ -42,7 +42,38 @@ def get_current_user(
                 detail="Invalid token payload"
             )
 
-        user = db.query(BUser).filter(BUser.id == int(user_id)).first()
+        user_id_int = int(user_id)
+        
+        # If user_id is 0, this is the admin user (dummy user created during authentication)
+        if user_id_int == 0:
+            # Check if this is actually an admin by looking up in auser_table
+            from sqlalchemy import text
+            admin_result = db.execute(
+                text("SELECT aname, apwd FROM auser_table WHERE aname = 'admin'") 
+            ).fetchone()
+            
+            if admin_result:
+                # Create a dummy BUser object for the admin user
+                dummy_user = BUser(
+                    id=0,
+                    uname=admin_result.aname,
+                    bname=admin_result.aname,
+                    phoneNo="",
+                    ctype="admin",
+                    idno="admin",
+                    bpwd=admin_result.apwd,
+                    rdate=None,
+                    userlvl="admin"
+                )
+                logger.info(f"Admin user validated: {dummy_user.uname}")
+                return dummy_user
+            else:
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="Admin user not found"
+                )
+        
+        user = db.query(BUser).filter(BUser.id == user_id_int).first()
         if user is None:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
@@ -60,3 +91,13 @@ def get_current_user(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Authentication error: {str(e)}"
         )
+
+def get_current_admin(
+    current_user: BUser = Depends(get_current_user)
+):
+    if getattr(current_user, 'userlvl', None) != 'admin':
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Admin access required"
+        )
+    return current_user

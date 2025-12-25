@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 from app.database import get_db
-from app.dependencies import get_current_user
+from app.dependencies import get_current_user, get_current_admin
 from app.crud import stats as crud_stats
 from app.models.city_info import CityInfo
 
@@ -17,7 +17,7 @@ def get_monthly_statistics(
     page: int = Query(1, ge=1),
     size: int = Query(10, ge=1, le=100),
     db: Session = Depends(get_db),
-    current_user = Depends(get_current_user)
+    current_admin = Depends(get_current_admin)
 ):
     # If city_name is provided, find the corresponding city_id
     if city_name:

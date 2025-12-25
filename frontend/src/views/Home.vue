@@ -7,6 +7,7 @@
       </el-card>
     </div>
 
+
     <el-row :gutter="20" class="action-cards">
       <el-col :xs="24" :sm="12" :md="4">
         <el-card class="action-card" shadow="hover" @click="router.push('/needs/create')">
@@ -29,7 +30,7 @@
           <p>View my service responses</p>
         </el-card>
       </el-col>
-      <el-col :xs="24" :sm="12" :md="4">
+      <el-col :xs="24" :sm="12" :md="4" v-if="isAdmin">
         <el-card class="action-card" shadow="hover" @click="router.push('/stats')">
           <el-icon :size="48" color="#F56C6C"><DataAnalysis /></el-icon>
           <h3>Statistics</h3>
@@ -56,6 +57,8 @@
 
 <script setup>
 import { useRouter } from 'vue-router'
+import { useUserStore } from '@/stores/user'
+import { computed } from 'vue'
 import {
   Plus,
   Document,
@@ -66,6 +69,12 @@ import {
 } from '@element-plus/icons-vue'
 
 const router = useRouter()
+const userStore = useUserStore()
+
+// 计算属性：检查当前用户是否为管理员
+const isAdmin = computed(() => {
+  return userStore.userInfo?.userlvl === 'admin'
+})
 </script>
 
 <style scoped>

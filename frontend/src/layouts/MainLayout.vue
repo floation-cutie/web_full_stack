@@ -28,7 +28,7 @@
             <el-icon><Search /></el-icon>
             <span>Browse Needs</span>
           </el-menu-item>
-          <el-menu-item index="/stats">
+          <el-menu-item index="/stats" v-if="isAdmin">
             <el-icon><DataAnalysis /></el-icon>
             <span>Statistics</span>
           </el-menu-item>
@@ -82,6 +82,11 @@ import {
 const router = useRouter()
 const route = useRoute()
 const userStore = useUserStore()
+
+// 计算属性：检查当前用户是否为管理员
+const isAdmin = computed(() => {
+  return userStore.userInfo?.userlvl === 'admin'
+})
 
 const activeMenu = computed(() => {
   return '/' + route.path.split('/')[1]

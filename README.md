@@ -38,13 +38,13 @@ web_full_stack/
 
 ```bash
 # 启动所有服务
-docker-compose -f config/docker-compose.yml up -d
+docker-compose -f docker-compose.yml up -d
 
 # 查看日志
-docker-compose -f config/docker-compose.yml logs -f
+docker-compose -f docker-compose.yml logs -f
 
 # 停止服务
-docker-compose -f config/docker-compose.yml down
+docker-compose -f docker-compose.yml down
 ```
 
 #### 方式 2：手动设置

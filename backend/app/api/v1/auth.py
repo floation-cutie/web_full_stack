@@ -44,7 +44,8 @@ def login(credentials: UserLogin, db: Session = Depends(get_db)):
                 "id": user.id,
                 "uname": user.uname,
                 "bname": user.bname,
-                "phoneNo": user.phoneNo
+                "phoneNo": user.phoneNo,
+                "userlvl": user.userlvl
             }
         }
     }

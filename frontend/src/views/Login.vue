@@ -90,8 +90,7 @@ const loginRules = {
     { min: 3, max: 20, message: 'Username length must be 3-20 characters', trigger: 'blur' }
   ],
   password: [
-    { required: true, message: 'Please enter password', trigger: 'blur' },
-    { min: 6, message: 'Password must be at least 6 characters', trigger: 'blur' }
+    { required: true, message: 'Please enter password', trigger: 'blur' }
   ]
 }
 
