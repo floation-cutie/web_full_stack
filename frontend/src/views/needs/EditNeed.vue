@@ -3,8 +3,8 @@
     <el-card v-loading="loading">
       <template #header>
         <div class="card-header">
-          <h2>Edit Service Request</h2>
-          <el-button @click="router.back()">Back</el-button>
+          <h2>编辑服务请求</h2>
+          <el-button @click="router.back()">返回</el-button>
         </div>
       </template>
 
@@ -16,17 +16,17 @@
         label-position="right"
         style="max-width: 800px"
       >
-        <el-form-item label="Service Title" prop="sr_title">
+        <el-form-item label="服务标题" prop="sr_title">
           <el-input
             v-model="form.sr_title"
-            placeholder="Please enter service request title (e.g., Need plumbing repair)"
+            placeholder="请输入服务请求标题 (例如，需要水电维修)"
             maxlength="80"
             show-word-limit
           />
         </el-form-item>
 
-        <el-form-item label="Service Type" prop="stype_id">
-          <el-select v-model="form.stype_id" placeholder="Please select service type" style="width: 100%">
+        <el-form-item label="服务类型" prop="stype_id">
+          <el-select v-model="form.stype_id" placeholder="请选择服务类型" style="width: 100%">
             <el-option
               v-for="type in serviceTypes"
               :key="type.id"
@@ -36,8 +36,8 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item label="City" prop="cityID">
-          <el-select v-model="form.cityID" placeholder="Please select city" style="width: 100%">
+        <el-form-item label="城市" prop="cityID">
+          <el-select v-model="form.cityID" placeholder="请选择城市" style="width: 100%">
             <el-option
               v-for="city in cities"
               :key="city.id"
@@ -47,18 +47,18 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item label="Description" prop="desc">
+        <el-form-item label="描述" prop="desc">
           <el-input
             v-model="form.desc"
             type="textarea"
             :rows="5"
-            placeholder="Please describe your service request in detail"
+            placeholder="请详细描述您的服务请求"
             maxlength="300"
             show-word-limit
           />
         </el-form-item>
 
-        <el-form-item label="Images/Videos">
+        <el-form-item label="图片/视频">
           <el-upload
             v-model:file-list="fileList"
             class="upload-demo"
@@ -72,10 +72,10 @@
             :limit="5"
             :auto-upload="true"
           >
-            <el-button type="primary">Click to upload</el-button>
+            <el-button type="primary">点击上传</el-button>
             <template #tip>
               <div class="el-upload__tip">
-                jpg/png/gif/mp4/avi/mov/wmv files with a size less than 10MB, up to 5 files
+                jpg/png/gif/mp4/avi/mov/wmv 文件，单个文件不超过 10MB，最多上传 5 个文件
               </div>
             </template>
           </el-upload>
@@ -104,10 +104,10 @@
 
         <el-form-item>
           <el-button type="primary" :loading="submitting" @click="handleSubmit">
-            Update Request
+            上传请求
           </el-button>
-          <el-button @click="handleReset">Reset</el-button>
-          <el-button @click="router.back()">Cancel</el-button>
+          <el-button @click="handleReset">重置</el-button>
+          <el-button @click="router.back()">取消</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -162,18 +162,18 @@ const form = reactive({
 
 const rules = {
   sr_title: [
-    { required: true, message: 'Please enter service title', trigger: 'blur' },
-    { min: 3, max: 80, message: 'Title length must be 3-80 characters', trigger: 'blur' }
+    { required: true, message: '请输入服务标题', trigger: 'blur' },
+    { min: 3, max: 80, message: '标题长度必须为3-80个字符', trigger: 'blur' }
   ],
   stype_id: [
-    { required: true, message: 'Please select service type', trigger: 'change' }
+    { required: true, message: '请选择服务类型', trigger: 'change' }
   ],
   cityID: [
-    { required: true, message: 'Please select city', trigger: 'change' }
+    { required: true, message: '请选择城市', trigger: 'change' }
   ],
   desc: [
-    { required: true, message: 'Please enter description', trigger: 'blur' },
-    { min: 10, max: 300, message: 'Description length must be 10-300 characters', trigger: 'blur' }
+    { required: true, message: '请输入描述', trigger: 'blur' },
+    { min: 10, max: 300, message: '描述长度必须为10-300个字符', trigger: 'blur' }
   ]
 }
 

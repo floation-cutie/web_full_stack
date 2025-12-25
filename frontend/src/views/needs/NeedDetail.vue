@@ -3,7 +3,7 @@
     <el-card v-loading="loading" class="detail-card">
       <template #header>
         <div class="card-header">
-          <h2>Service Request Details</h2>
+          <h2>服务请求详细信息</h2>
           <div>
             <el-button 
               v-if="isMyRequest"
@@ -11,7 +11,7 @@
               @click="handleEdit"
               :disabled="hasResponses"
             >
-              Edit
+              编辑
             </el-button>
             <el-button 
               v-if="isMyRequest"
@@ -19,9 +19,9 @@
               @click="handleDelete"
               :disabled="hasResponses"
             >
-              Delete
+              删除
             </el-button>
-            <el-button @click="router.back()">Back</el-button>
+            <el-button @click="router.back()">返回</el-button>
           </div>
         </div>
       </template>
@@ -30,31 +30,31 @@
         <el-descriptions-item label="Request ID">
           {{ detail.sr_id }}
         </el-descriptions-item>
-        <el-descriptions-item label="Title" :span="2">
+        <el-descriptions-item label="标题" :span="2">
           {{ detail.sr_title }}
         </el-descriptions-item>
-        <el-descriptions-item label="Service Type">
+        <el-descriptions-item label="服务类型">
           {{ getServiceTypeName(detail.stype_id) }}
         </el-descriptions-item>
         <el-descriptions-item label="Status">
-          <el-tag v-if="detail.ps_state === 0" type="success">Published</el-tag>
-          <el-tag v-else-if="detail.ps_state === 1" type="warning">Responded</el-tag>
-          <el-tag v-else-if="detail.ps_state === 2" type="info">Completed</el-tag>
-          <el-tag v-else-if="detail.ps_state === -1" type="danger">Cancelled</el-tag>
-          <el-tag v-else>Unknown</el-tag>
+          <el-tag v-if="detail.ps_state === 0" type="success">已发布</el-tag>
+          <el-tag v-else-if="detail.ps_state === 1" type="warning">已响应</el-tag>
+          <el-tag v-else-if="detail.ps_state === 2" type="info">已完成</el-tag>
+          <el-tag v-else-if="detail.ps_state === -1" type="danger">已取消</el-tag>
+          <el-tag v-else>未知</el-tag>
         </el-descriptions-item>
-        <el-descriptions-item label="Start Date">
+        <el-descriptions-item label="开始日期">
           {{ formatDateTime(detail.ps_begindate) }}
         </el-descriptions-item>
-        <el-descriptions-item label="City">
+        <el-descriptions-item label="城市">
           {{ getCityName(detail.cityID) }}
         </el-descriptions-item>
-        <el-descriptions-item label="Description" :span="2">
+        <el-descriptions-item label="描述" :span="2">
           {{ detail.desc }}
         </el-descriptions-item>
         
         <!-- Display Images -->
-        <el-descriptions-item label="Images" :span="2" v-if="imageFiles.length > 0">
+        <el-descriptions-item label="图片" :span="2" v-if="imageFiles.length > 0">
           <div class="image-preview-container">
             <div v-for="(file, index) in imageFiles" :key="index" class="image-preview-item">
               <img :src="getFullImageUrl(file)" :alt="file" class="preview-image" />
@@ -63,7 +63,7 @@
         </el-descriptions-item>
         
         <!-- Display Videos -->
-        <el-descriptions-item label="Videos" :span="2" v-if="videoFiles.length > 0">
+        <el-descriptions-item label="视频" :span="2" v-if="videoFiles.length > 0">
           <div class="video-preview-container">
             <div v-for="(file, index) in videoFiles" :key="index" class="video-preview-item">
               <video controls class="preview-video">
@@ -79,7 +79,7 @@
     <el-card class="responses-card">
       <template #header>
         <div class="card-header">
-          <h3>Service Responses ({{ responsesTotal }})</h3>
+          <h3>服务响应 ({{ responsesTotal }})</h3>
         </div>
       </template>
 
@@ -89,35 +89,35 @@
         stripe
         style="width: 100%"
       >
-        <el-table-column prop="response_id" label="Response ID" width="120" />
-        <el-table-column prop="responder_name" label="Responder" width="150">
+        <el-table-column prop="response_id" label="响应 ID" width="120" />
+        <el-table-column prop="responder_name" label="响应者" width="150">
   <template #default="{ row }">
     <span>{{ row.responder_name || '-' }}</span>
   </template>
 </el-table-column>
-        <el-table-column prop="desc" label="Response Content" show-overflow-tooltip>
+        <el-table-column prop="desc" label="响应内容" show-overflow-tooltip>
   <template #default="{ row }">
     <span>{{ row.desc || 'NO CONTENT' }}</span>
   </template>
 </el-table-column>
-        <el-table-column prop="responder_phone" label="Contact Phone" width="150">
+        <el-table-column prop="responder_phone" label="联系方式" width="150">
   <template #default="{ row }">
     <span>{{ row.responder_phone || '-' }}</span>
   </template>
 </el-table-column>
-        <el-table-column prop="response_date" label="Response Time" width="180">
+        <el-table-column prop="response_date" label="响应时间" width="180">
           <template #default="{ row }">
             {{ formatDateTime(row.response_date) }}
           </template>
         </el-table-column>
-        <el-table-column prop="response_state" label="Status" width="100">
+        <el-table-column prop="response_state" label="状态" width="100">
           <template #default="{ row }">
             <el-tag :type="getResponseStatusType(row.response_state)">
               {{ getResponseStatusText(row.response_state) }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="Actions" width="200" fixed="right">
+        <el-table-column label="操作" width="200" fixed="right">
           <template #default="{ row }">
             <!-- Debug information -->
             <div style="font-size: 12px; color: #999;">
@@ -132,14 +132,14 @@
                 @click="handleAccept(row)"
                 style="margin-right: 5px;"
               >
-                Accept
+                接受
               </el-button>
               <el-button
                 type="danger"
                 size="small"
                 @click="handleReject(row)"
               >
-                Reject
+                拒绝
               </el-button>
             </div>
             <el-button
@@ -148,7 +148,7 @@
               @click="viewResponseDetail(row)"
               plain
             >
-              View Detail
+              详细信息
             </el-button>
           </template>
         </el-table-column>
@@ -400,13 +400,13 @@ const viewResponseDetail = (response) => {
   // 在这里我们可以打开一个对话框显示响应的详细信息
   ElMessageBox.alert(
     `<div>
-      <p><strong>Responder:</strong> ${response.responder_name || '-'}</p>
-      <p><strong>Contact Phone:</strong> ${response.responder_phone || '-'}</p>
-      <p><strong>Response Time:</strong> ${formatDateTime(response.response_date)}</p>
-      <p><strong>Content:</strong> ${response.desc || 'NO CONTENT'}</p>
+      <p><strong>响应者：</strong> ${response.responder_name || '-'}</p>
+      <p><strong>联系电话：</strong> ${response.responder_phone || '-'}</p>
+      <p><strong>响应时间：</strong> ${formatDateTime(response.response_date)}</p>
+      <p><strong>内容：</strong> ${response.desc || 'NO CONTENT'}</p>
       ${response.file_list ? `
         <div style="margin-top: 15px;">
-          <strong>Attached Files:</strong>
+          <strong>附件文件：</strong>
           <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;">
             ${response.file_list.split(',').map(file => {
               const fileName = file.trim();
@@ -435,7 +435,7 @@ const viewResponseDetail = (response) => {
         </div>
       ` : ''}
     </div>`,
-    'Response Detail',
+    '响应详细信息',
     {
       dangerouslyUseHTMLString: true,
       customClass: 'response-detail-dialog'

@@ -2,14 +2,14 @@
   <div class="browse-needs-page">
     <el-card class="header-card">
       <div class="header-content">
-        <h2>All Service Requests</h2>
+        <h2>所有服务请求</h2>
       </div>
     </el-card>
 
     <el-card class="filter-card">
       <el-form :inline="true" :model="filterForm">
-        <el-form-item label="Service Type">
-          <el-select v-model="filterForm.serviceTypeId" placeholder="All" clearable style="width: 200px">
+        <el-form-item label="服务类型">
+          <el-select v-model="filterForm.serviceTypeId" placeholder="全部" clearable style="width: 200px">
             <el-option
               v-for="type in serviceTypes"
               :key="type.id"
@@ -18,8 +18,8 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="City">
-          <el-select v-model="filterForm.cityId" placeholder="Select city" clearable style="width: 150px">
+        <el-form-item label="城市">
+          <el-select v-model="filterForm.cityId" placeholder="选择城市" clearable style="width: 150px">
             <el-option
               v-for="city in cities"
               :key="city.id"
@@ -43,28 +43,28 @@
         style="width: 100%"
       >
         <el-table-column prop="sr_id" label="ID" width="80" />
-        <el-table-column prop="sr_title" label="Title" show-overflow-tooltip min-width="150" />
-        <el-table-column prop="stype_id" label="Service Type" width="120">
+        <el-table-column prop="sr_title" label="标题" show-overflow-tooltip min-width="150" />
+        <el-table-column prop="stype_id" label="服务类型" width="120">
           <template #default="{ row }">
             {{ getServiceTypeName(row.stype_id) }}
           </template>
         </el-table-column>
-        <el-table-column prop="desc" label="Description" show-overflow-tooltip />
-        <el-table-column prop="city_name" label="City" width="100" />
-        <el-table-column prop="ps_begindate" label="Start Date" width="180">
+        <el-table-column prop="desc" label="描述" show-overflow-tooltip />
+        <el-table-column prop="city_name" label="城市" width="100" />
+        <el-table-column prop="ps_begindate" label="开始时间" width="180">
           <template #default="{ row }">
             {{ formatDateTime(row.ps_begindate) }}
           </template>
         </el-table-column>
-        <el-table-column prop="psr_userid" label="Publisher" width="120">
+        <el-table-column prop="psr_userid" label="发布者" width="120">
           <template #default="{ row }">
             {{ row.publisher_name || 'Unknown' }}
           </template>
         </el-table-column>
-        <el-table-column label="Actions" width="200" fixed="right">
+        <el-table-column label="操作" width="200" fixed="right">
           <template #default="{ row }">
             <el-button type="primary" size="small" @click="viewDetail(row.sr_id)">
-              View
+              查看
             </el-button>
             <el-button 
               type="success" 
@@ -72,7 +72,7 @@
               @click="respondToRequest(row.sr_id)"
               :disabled="row.psr_userid === currentUser.id"
             >
-              Respond
+              响应
             </el-button>
           </template>
         </el-table-column>

@@ -4,7 +4,7 @@
       <div class="header-content">
         <div class="logo">
           <el-icon><Service /></el-icon>
-          <span>GoodServices</span>
+          <span>好服务</span>
         </div>
         <el-menu
           :default-active="activeMenu"
@@ -14,23 +14,23 @@
         >
           <el-menu-item index="/home">
             <el-icon><HomeFilled /></el-icon>
-            <span>Dashboard</span>
+            <span>首页</span>
           </el-menu-item>
           <el-menu-item index="/needs">
             <el-icon><Document /></el-icon>
-            <span>My Needs</span>
+            <span>我的需求</span>
           </el-menu-item>
           <el-menu-item index="/responses">
             <el-icon><ChatDotRound /></el-icon>
-            <span>My Responses</span>
+            <span>我的响应</span>
           </el-menu-item>
           <el-menu-item index="/browse-needs">
             <el-icon><Search /></el-icon>
-            <span>Browse Needs</span>
+            <span>浏览需求</span>
           </el-menu-item>
           <el-menu-item index="/stats" v-if="isAdmin">
             <el-icon><DataAnalysis /></el-icon>
-            <span>Statistics</span>
+            <span>数据统计</span>
           </el-menu-item>
         </el-menu>
         <div class="user-info">
@@ -44,11 +44,11 @@
               <el-dropdown-menu>
                 <el-dropdown-item command="profile">
                   <el-icon><User /></el-icon>
-                  Profile
+                  个人资料
                 </el-dropdown-item>
                 <el-dropdown-item command="logout" divided>
                   <el-icon><SwitchButton /></el-icon>
-                  Logout
+                  退出登录  
                 </el-dropdown-item>
               </el-dropdown-menu>
             </template>

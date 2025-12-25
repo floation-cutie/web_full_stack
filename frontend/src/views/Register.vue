@@ -3,14 +3,14 @@
     <div class="register-box">
       <div class="register-header">
         <el-icon :size="48" color="#409EFF"><House /></el-icon>
-        <h1>GoodServices</h1>
-        <p>Community Service Platform</p>
+        <h1>好服务</h1>
+        <p>社区服务平台</p>
       </div>
 
       <el-card class="register-card">
         <template #header>
           <div class="card-header">
-            <span>Register</span>
+            <span>注册</span>
           </div>
         </template>
 
@@ -21,72 +21,72 @@
           label-position="top"
           @submit.prevent="handleRegister"
         >
-          <el-form-item label="Username" prop="username">
+          <el-form-item label="用户名" prop="username">
             <el-input
               v-model="registerForm.username"
-              placeholder="Enter username (3-20 characters)"
+              placeholder="输入用户名 (3-20个字符)"
               size="large"
               :prefix-icon="User"
             />
           </el-form-item>
 
-          <el-form-item label="Real Name" prop="bname">
+          <el-form-item label="真实姓名" prop="bname">
             <el-input
               v-model="registerForm.bname"
-              placeholder="Enter real name"
+              placeholder="输入真实姓名"
               size="large"
               :prefix-icon="User"
             />
           </el-form-item>
 
-          <el-form-item label="Password" prop="password">
+          <el-form-item label="密码" prop="password">
             <el-input
               v-model="registerForm.password"
               type="password"
-              placeholder="At least 6 characters, 2+ digits"
+              placeholder="至少6个字符，包含2个以上数字"
               size="large"
               :prefix-icon="Lock"
               show-password
             />
           </el-form-item>
 
-          <el-form-item label="Confirm Password" prop="confirmPassword">
+          <el-form-item label="确认密码" prop="confirmPassword">
             <el-input
               v-model="registerForm.confirmPassword"
               type="password"
-              placeholder="Enter password again"
+              placeholder="确认密码"
               size="large"
               :prefix-icon="Lock"
               show-password
             />
           </el-form-item>
 
-          <el-form-item label="Phone Number" prop="phoneNo">
+          <el-form-item label="手机号码" prop="phoneNo">
             <el-input
               v-model="registerForm.phoneNo"
-              placeholder="Enter phone number"
+              placeholder="输入手机号码"
               size="large"
               :prefix-icon="Phone"
             />
           </el-form-item>
 
-          <el-form-item label="ID Type" prop="ctype">
+          <el-form-item label="证件类型" prop="ctype">
             <el-select
               v-model="registerForm.ctype"
-              placeholder="Select ID type"
+              placeholder="选择证件类型"
               size="large"
               style="width: 100%"
             >
-              <el-option label="ID Card" value="身份证" />
-              <el-option label="Passport" value="护照" />
-              <el-option label="Other" value="其他" />
+              <el-option label="身份证" value="身份证" />
+              <el-option label="护照" value="护照" />
+              <el-option label="其他" value="其他" />
             </el-select>
           </el-form-item>
 
-          <el-form-item label="ID Number" prop="idno">
+          <el-form-item label="证件号码" prop="idno">
             <el-input
               v-model="registerForm.idno"
-              placeholder="Enter ID number"
+              placeholder="输入证件号码"
               size="large"
               :prefix-icon="CreditCard"
             />

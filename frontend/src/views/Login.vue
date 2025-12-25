@@ -3,14 +3,14 @@
     <div class="login-box">
       <div class="login-header">
         <el-icon :size="48" color="#409EFF"><House /></el-icon>
-        <h1>GoodServices</h1>
-        <p>Community Service Platform</p>
+        <h1>好服务</h1>
+        <p>社区服务平台</p>
       </div>
 
       <el-card class="login-card">
         <template #header>
           <div class="card-header">
-            <span>Login</span>
+            <span>登录</span>
           </div>
         </template>
 
@@ -21,20 +21,20 @@
           label-position="top"
           @submit.prevent="handleLogin"
         >
-          <el-form-item label="Username" prop="username">
+          <el-form-item label="用户名" prop="username">
             <el-input
               v-model="loginForm.username"
-              placeholder="Enter your username"
+              placeholder="输入用户名"
               size="large"
               :prefix-icon="User"
             />
           </el-form-item>
 
-          <el-form-item label="Password" prop="password">
+          <el-form-item label="密码" prop="password">
             <el-input
               v-model="loginForm.password"
               type="password"
-              placeholder="Enter your password"
+              placeholder="输入密码"
               size="large"
               :prefix-icon="Lock"
               show-password
@@ -50,14 +50,14 @@
               style="width: 100%"
               @click="handleLogin"
             >
-              Login
+              登录
             </el-button>
           </el-form-item>
 
           <div class="login-footer">
-            <span>Don't have an account?</span>
+            <span>没有账户？</span>
             <el-link type="primary" @click="router.push('/register')">
-              Register now
+              注册
             </el-link>
           </div>
         </el-form>
@@ -86,11 +86,11 @@ const loginForm = reactive({
 
 const loginRules = {
   username: [
-    { required: true, message: 'Please enter username', trigger: 'blur' },
-    { min: 3, max: 20, message: 'Username length must be 3-20 characters', trigger: 'blur' }
+    { required: true, message: '请输入用户名', trigger: 'blur' },
+    { min: 3, max: 20, message: '用户名长度必须为3-20个字符', trigger: 'blur' }
   ],
   password: [
-    { required: true, message: 'Please enter password', trigger: 'blur' }
+    { required: true, message: '请输入密码', trigger: 'blur' }
   ]
 }
 

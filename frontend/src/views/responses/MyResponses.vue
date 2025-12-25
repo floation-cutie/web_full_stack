@@ -2,14 +2,14 @@
   <div class="response-list-page">
     <el-card class="header-card">
       <div class="header-content">
-        <h2>My Service Responses</h2>
+        <h2>我的服务响应</h2>
       </div>
     </el-card>
 
     <el-card class="filter-card">
       <el-form :inline="true" :model="filterForm">
-        <el-form-item label="City">
-          <el-select v-model="filterForm.cityId" placeholder="Select city" clearable style="width: 150px">
+        <el-form-item label="城市">
+          <el-select v-model="filterForm.cityId" placeholder="选择城市" clearable style="width: 150px">
             <el-option
               v-for="city in cities"
               :key="city.id"
@@ -20,8 +20,8 @@
         </el-form-item>
         
         <el-form-item>
-          <el-button type="primary" @click="handleSearch">Search</el-button>
-          <el-button @click="handleReset">Reset</el-button>
+          <el-button type="primary" @click="handleSearch">搜索</el-button>
+          <el-button @click="handleReset">重置</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -33,39 +33,39 @@
         stripe
         style="width: 100%"
       >
-        <el-table-column prop="response_id" label="Response ID" width="120" />
-        <el-table-column prop="sr_id" label="Request ID" width="120" />
-        <el-table-column prop="desc" label="My Response" show-overflow-tooltip>
+        <el-table-column prop="response_id" label="响应 ID" width="100" />
+        <el-table-column prop="sr_id" label="请求 ID" width="100" />
+        <el-table-column prop="desc" label="我的响应" show-overflow-tooltip>
   <template #default="{ row }">
     <span>{{ row.desc || 'NO CONTENT' }}</span>
   </template>
 </el-table-column>
-        <el-table-column prop="responder_name" label="Responder Name" width="150">
+        <el-table-column prop="responder_name" label="响应者姓名" width="150">
           <template #default="{ row }">
             <span>{{ row.responder_name || '-' }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="responder_phone" label="Responder Phone" width="150">
+        <el-table-column prop="responder_phone" label="电话" width="150">
           <template #default="{ row }">
             <span>{{ row.responder_phone || '-' }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="response_date" label="Response Time" width="180">
+        <el-table-column prop="response_date" label="响应时间" width="180">
           <template #default="{ row }">
             {{ formatDateTime(row.response_date) }}
           </template>
         </el-table-column>
-        <el-table-column prop="response_state" label="Status" width="100">
+        <el-table-column prop="response_state" label="状态" width="100">
           <template #default="{ row }">
             <el-tag :type="getStatusType(row.response_state)">
               {{ getStatusText(row.response_state) }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="Actions" width="250" fixed="right">
+        <el-table-column label="操作" width="270" fixed="right">
           <template #default="{ row }">
             <el-button type="primary" size="small" @click="viewRequest(row.sr_id)">
-              View Request
+              查看
             </el-button>
             <el-button
               v-if="row.response_state === 0"
@@ -73,7 +73,7 @@
               size="small"
               @click="editResponse(row.response_id)"
             >
-              Edit
+              编辑
             </el-button>
             <el-button
               v-if="row.response_state === 0"
@@ -81,7 +81,7 @@
               size="small"
               @click="handleCancel(row.response_id)"
             >
-              Cancel
+              取消
             </el-button>
             <el-button
               v-if="row.response_state === 0"
@@ -89,7 +89,7 @@
               size="small"
               @click="handleDelete(row.response_id)"
             >
-              Delete
+              删除
             </el-button>
           </template>
         </el-table-column>

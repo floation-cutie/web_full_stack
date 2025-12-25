@@ -2,17 +2,17 @@
   <div class="create-response-page">
     <el-card v-loading="requestLoading" class="request-card">
       <template #header>
-        <h3>Service Request Information</h3>
+        <h3>服务请求信息</h3>
       </template>
 
       <el-descriptions v-if="requestDetail" :column="2" border>
-        <el-descriptions-item label="Service Type">
+        <el-descriptions-item label="服务类型">
           {{ requestDetail.service_type_name }}
         </el-descriptions-item>
-        <el-descriptions-item label="Publisher">
+        <el-descriptions-item label="发布者">
           {{ requestDetail.publisher_name }}
         </el-descriptions-item>
-        <el-descriptions-item label="Description" :span="2">
+        <el-descriptions-item label="描述" :span="2">
           {{ requestDetail.desc }}
         </el-descriptions-item>
       </el-descriptions>
@@ -21,8 +21,8 @@
     <el-card class="form-card">
       <template #header>
         <div class="card-header">
-          <h2>Submit Service Response</h2>
-          <el-button @click="router.back()">Back</el-button>
+          <h2>提交服务响应</h2>
+          <el-button @click="router.back()">返回</el-button>
         </div>
       </template>
 
@@ -34,27 +34,27 @@
         label-position="right"
         style="max-width: 800px"
       >
-        <el-form-item label="Response Title" prop="responseTitle">
+        <el-form-item label="响应标题" prop="responseTitle">
           <el-input
             v-model="form.responseTitle"
-            placeholder="Please enter a title for your response"
+            placeholder="请输入响应标题"
             maxlength="50"
             show-word-limit
           />
         </el-form-item>
 
-        <el-form-item label="Response Description" prop="responseContent">
+        <el-form-item label="响应描述" prop="responseContent">
           <el-input
             v-model="form.responseContent"
             type="textarea"
             :rows="5"
-            placeholder="Please describe your service capabilities and plan in detail"
+            placeholder="请详细描述您的服务能力和计划"
             maxlength="500"
             show-word-limit
           />
         </el-form-item>
 
-        <el-form-item label="Images/Videos">
+        <el-form-item label="图片/视频">
           <el-upload
             v-model:file-list="fileList"
             class="upload-demo"
@@ -68,10 +68,10 @@
             :limit="5"
             :auto-upload="true"
           >
-            <el-button type="primary">Click to upload</el-button>
+            <el-button type="primary">点击上传</el-button>
             <template #tip>
               <div class="el-upload__tip">
-                jpg/png/gif/mp4/avi/mov/wmv files with a size less than 10MB, up to 5 files
+                jpg/png/gif/mp4/avi/mov/wmv 文件，单个文件不超过 10MB，最多上传 5 个文件
               </div>
             </template>
           </el-upload>

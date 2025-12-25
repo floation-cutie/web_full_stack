@@ -2,8 +2,8 @@
   <div class="home-page">
     <div class="welcome-section">
       <el-card class="welcome-card">
-        <h1>Welcome to GoodServices</h1>
-        <p>Connect with your community for service needs and offers</p>
+        <h1>欢迎来到好服务</h1>
+        <p>与您的社区连接，高效对接服务需求与响应</p>
       </el-card>
     </div>
 
@@ -12,43 +12,43 @@
       <el-col :xs="24" :sm="12" :md="4">
         <el-card class="action-card" shadow="hover" @click="router.push('/needs/create')">
           <el-icon :size="48" color="#409EFF"><Plus /></el-icon>
-          <h3>Publish Need</h3>
-          <p>Post a service request</p>
+          <h3>发布需求</h3>
+          <p>填写发布服务需求信息</p>
         </el-card>
       </el-col>
       <el-col :xs="24" :sm="12" :md="4">
         <el-card class="action-card" shadow="hover" @click="router.push('/needs')">
           <el-icon :size="48" color="#67C23A"><Document /></el-icon>
-          <h3>My Needs</h3>
-          <p>View my service requests</p>
+          <h3>我的需求</h3>
+          <p>查看我的服务请求</p>
         </el-card>
       </el-col>
       <el-col :xs="24" :sm="12" :md="4">
         <el-card class="action-card" shadow="hover" @click="router.push('/responses')">
           <el-icon :size="48" color="#E6A23C"><ChatDotRound /></el-icon>
-          <h3>My Responses</h3>
-          <p>View my service responses</p>
+          <h3>我的响应</h3>
+          <p>查看我的服务响应</p>
         </el-card>
       </el-col>
       <el-col :xs="24" :sm="12" :md="4" v-if="isAdmin">
         <el-card class="action-card" shadow="hover" @click="router.push('/stats')">
           <el-icon :size="48" color="#F56C6C"><DataAnalysis /></el-icon>
-          <h3>Statistics</h3>
-          <p>View service statistics</p>
+          <h3>数据统计</h3>
+          <p>查看服务统计数据</p>
         </el-card>
       </el-col>
       <el-col :xs="24" :sm="12" :md="4">
         <el-card class="action-card" shadow="hover" @click="router.push('/browse-needs')">
           <el-icon :size="48" color="#909399"><Search /></el-icon>
-          <h3>Browse Needs</h3>
-          <p>Find service requests</p>
+          <h3>浏览需求</h3>
+          <p>查找服务需求信息</p>
         </el-card>
       </el-col>
       <el-col :xs="24" :sm="12" :md="4">
         <el-card class="action-card" shadow="hover" @click="router.push('/profile')">
           <el-icon :size="48" color="#409EFF"><User /></el-icon>
-          <h3>My Profile</h3>
-          <p>Manage your profile</p>
+          <h3>我的资料</h3>
+          <p>管理您的个人资料</p>
         </el-card>
       </el-col>
     </el-row>

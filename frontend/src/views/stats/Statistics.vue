@@ -3,37 +3,37 @@
     <el-card class="query-card">
       <template #header>
         <div class="card-header">
-          <span>Query Filters</span>
+          <span>查询筛选</span>
         </div>
       </template>
 
       <el-form :inline="true" :model="queryForm" class="query-form">
-        <el-form-item label="Start Month">
+        <el-form-item label="开始月份">
           <el-date-picker
             v-model="queryForm.start_month"
             type="month"
-            placeholder="Select start month"
+            placeholder="选择开始月份"
             format="YYYY-MM"
             value-format="YYYY-MM"
             style="width: 200px"
           />
         </el-form-item>
 
-        <el-form-item label="End Month">
+        <el-form-item label="结束月份">
           <el-date-picker
             v-model="queryForm.end_month"
             type="month"
-            placeholder="Select end month"
+            placeholder="选择结束月份"
             format="YYYY-MM"
             value-format="YYYY-MM"
             style="width: 200px"
           />
         </el-form-item>
 
-        <el-form-item label="City">
+        <el-form-item label="城市">
           <el-select
             v-model="queryForm.city_id"
-            placeholder="Select city"
+            placeholder="选择城市"
             clearable
             style="width: 180px"
           >
@@ -46,10 +46,10 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item label="Service Type">
+        <el-form-item label="服务类型">
           <el-select
             v-model="queryForm.service_type_id"
-            placeholder="Select service type"
+            placeholder="选择服务类型"
             clearable
             style="width: 180px"
           >
@@ -79,7 +79,7 @@
     <el-card class="chart-card">
       <template #header>
         <div class="card-header">
-          <span>Service Statistics Trend</span>
+          <span>服务统计趋势</span>
         </div>
       </template>
       <div ref="chartRef" style="width: 100%; height: 400px;"></div>
@@ -88,17 +88,17 @@
     <el-card class="table-card">
       <template #header>
         <div class="card-header">
-          <span>Statistical Data Details</span>
+          <span>统计数据详情</span>
         </div>
       </template>
 
       <el-table :data="tableData" stripe border v-loading="loading" style="width: 100%">
-        <el-table-column prop="month" label="Month" width="120" />
-        <el-table-column prop="serviceType" label="Service Type" width="150" />
-        <el-table-column prop="city" label="City" width="120" />
-        <el-table-column prop="publishedCount" label="Published Needs" width="140" sortable />
-        <el-table-column prop="completedCount" label="Completed Services" width="160" sortable />
-        <el-table-column prop="successRate" label="Success Rate" width="120">
+        <el-table-column prop="month" label="月份" width="120" />
+        <el-table-column prop="serviceType" label="服务类型" width="150" />
+        <el-table-column prop="city" label="城市" width="120" />
+        <el-table-column prop="publishedCount" label="已发布需求" width="140" sortable />
+        <el-table-column prop="completedCount" label="已完成服务" width="160" sortable />
+        <el-table-column prop="successRate" label="成功率" width="120">
           <template #default="{ row }">
             <el-progress
               :percentage="row.successRate"

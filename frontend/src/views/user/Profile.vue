@@ -5,7 +5,7 @@
         <el-card class="profile-card">
           <template #header>
             <div class="card-header">
-              <span>Profile Information</span>
+              <span>个人资料</span>
             </div>
           </template>
 
@@ -16,44 +16,44 @@
             label-width="140px"
             label-position="right"
           >
-            <el-form-item label="Username" prop="username">
+            <el-form-item label="用户名" prop="username">
               <el-input
                 v-model="profileForm.username"
-                placeholder="Username"
+                placeholder="输入用户名"
                 disabled
                 :prefix-icon="User"
               />
             </el-form-item>
 
-            <el-form-item label="Phone Number" prop="phoneNo">
+            <el-form-item label="手机号码" prop="phoneNo">
               <el-input
                 v-model="profileForm.phoneNo"
-                placeholder="Enter phone number"
+                placeholder="输入手机号码"
                 :prefix-icon="Phone"
               />
             </el-form-item>
 
-            <el-form-item label="ID Number" prop="idno">
+            <el-form-item label="证件号码" prop="idno">
               <el-input
                 v-model="profileForm.idno"
-                placeholder="Enter ID number"
+                placeholder="输入证件号码"
                 :prefix-icon="CreditCard"
                 disabled
               />
             </el-form-item>
 
-            <el-form-item label="Real Name" prop="realName">
+            <el-form-item label="真实姓名" prop="realName">
               <el-input
                 v-model="profileForm.realName"
-                placeholder="Enter your real name"
+                placeholder="输入您的真实姓名"
                 :prefix-icon="UserFilled"
               />
             </el-form-item>
 
-            <el-form-item label="City" prop="cityId">
+            <el-form-item label="城市" prop="cityId">
               <el-select
                 v-model="profileForm.cityId"
-                placeholder="Select city"
+                placeholder="选择城市"
                 style="width: 100%"
               >
                 <el-option
@@ -65,11 +65,11 @@
               </el-select>
             </el-form-item>
 
-            <el-form-item label="Address" prop="address">
+            <el-form-item label="地址" prop="address">
               <el-input
                 v-model="profileForm.address"
                 type="textarea"
-                placeholder="Enter your address"
+                placeholder="输入您的地址"
                 :rows="3"
               />
             </el-form-item>
@@ -81,9 +81,9 @@
                 :loading="loading"
                 :icon="DocumentCopy"
               >
-                Save Changes
+                保存更改
               </el-button>
-              <el-button @click="handleResetProfile">Cancel</el-button>
+              <el-button @click="handleResetProfile">取消</el-button>
             </el-form-item>
           </el-form>
         </el-card>
@@ -93,23 +93,23 @@
         <el-card class="stats-card">
           <template #header>
             <div class="card-header">
-              <span>Account Stats</span>
+              <span>账户统计</span>
             </div>
           </template>
 
           <div class="stats-content">
             <div class="stat-item">
-              <div class="stat-label">Service Requests</div>
+              <div class="stat-label">服务请求</div>
               <div class="stat-value">{{ accountStats.serviceRequests }}</div>
             </div>
             <el-divider />
             <div class="stat-item">
-              <div class="stat-label">Service Responses</div>
+              <div class="stat-label">服务响应</div>
               <div class="stat-value">{{ accountStats.serviceResponses }}</div>
             </div>
             <el-divider />
             <div class="stat-item">
-              <div class="stat-label">Completed Services</div>
+              <div class="stat-label">完成服务</div>
               <div class="stat-value">{{ accountStats.completedServices }}</div>
             </div>
           </div>
@@ -122,7 +122,7 @@
         <el-card class="password-card">
           <template #header>
             <div class="card-header">
-              <span>Change Password</span>
+              <span>修改密码</span>
             </div>
           </template>
 
@@ -133,31 +133,31 @@
             label-width="140px"
             label-position="right"
           >
-            <el-form-item label="Old Password" prop="currentPassword">
+            <el-form-item label="旧密码" prop="currentPassword">
               <el-input
                 v-model="passwordForm.currentPassword"
                 type="password"
-                placeholder="Enter old password"
+                placeholder="输入旧密码"
                 :prefix-icon="Lock"
                 show-password
               />
             </el-form-item>
 
-            <el-form-item label="New Password" prop="newPassword">
+            <el-form-item label="新密码" prop="newPassword">
               <el-input
                 v-model="passwordForm.newPassword"
                 type="password"
-                placeholder="At least 6 characters, 2+ digits"
+                placeholder="至少6个字符，包含2个以上数字"
                 :prefix-icon="Lock"
                 show-password
               />
             </el-form-item>
 
-            <el-form-item label="Confirm Password" prop="confirmPassword">
+            <el-form-item label="确认密码" prop="confirmPassword">
               <el-input
                 v-model="passwordForm.confirmPassword"
                 type="password"
-                placeholder="Enter new password again"
+                placeholder="再次输入新密码"
                 :prefix-icon="Lock"
                 show-password
               />
@@ -170,9 +170,9 @@
                 :loading="passwordLoading"
                 :icon="Edit"
               >
-                Change Password
+                修改密码
               </el-button>
-              <el-button @click="handleResetPassword">Cancel</el-button>
+              <el-button @click="handleResetPassword">取消</el-button>
             </el-form-item>
           </el-form>
         </el-card>
@@ -318,10 +318,10 @@ const handleUpdateProfile = async () => {
       cityID: profileForm.cityId,
       address: profileForm.address
     })
-    ElMessage.success('Profile updated successfully')
+    ElMessage.success('资料更新成功')
     await loadProfileData()
   } catch (error) {
-    ElMessage.error(error.response?.data?.detail || 'Failed to update profile')
+    ElMessage.error(error.response?.data?.detail || '资料更新失败')
   } finally {
     loading.value = false
   }
@@ -346,10 +346,10 @@ const handleChangePassword = async () => {
       old_password: passwordForm.currentPassword,
       new_password: passwordForm.newPassword
     })
-    ElMessage.success('Password changed successfully')
+    ElMessage.success('密码修改成功')
     handleResetPassword()
   } catch (error) {
-    ElMessage.error(error.response?.data?.detail || 'Failed to change password')
+    ElMessage.error(error.response?.data?.detail || '密码修改失败')
   } finally {
     passwordLoading.value = false
   }
