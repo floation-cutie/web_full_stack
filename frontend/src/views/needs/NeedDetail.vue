@@ -43,7 +43,7 @@
           {{ formatDateTime(detail.ps_begindate) }}
         </el-descriptions-item>
         <el-descriptions-item label="City">
-          {{ detail.cityID }}
+          {{ getCityName(detail.cityID) }}
         </el-descriptions-item>
         <el-descriptions-item label="Description" :span="2">
           {{ detail.desc }}
@@ -168,7 +168,7 @@ import { acceptResponse, rejectResponse } from '@/api/match'
 import { getServiceTypes } from '@/api/user'
 import { useUserStore } from '@/stores/user'
 import Pagination from '@/components/Pagination.vue'
-import { RESPONSE_STATUS_TEXT, RESPONSE_STATUS_TYPE } from '@/utils/constants'
+import { RESPONSE_STATUS_TEXT, RESPONSE_STATUS_TYPE, CITIES } from '@/utils/constants'
 
 const route = useRoute()
 const router = useRouter()
@@ -224,6 +224,11 @@ const getResponseStatusType = (status) => {
 const getServiceTypeName = (typeId) => {
   const type = serviceTypes.value.find(t => t.id === typeId)
   return type ? type.name : 'Unknown'
+}
+
+const getCityName = (cityId) => {
+  const city = CITIES.find(c => c.id === cityId)
+  return city ? city.name : cityId
 }
 
 // Media file handling

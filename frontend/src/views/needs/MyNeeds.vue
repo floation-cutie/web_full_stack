@@ -55,7 +55,11 @@
           </template>
         </el-table-column>
         <el-table-column prop="desc" label="Description" show-overflow-tooltip />
-        <el-table-column prop="cityID" label="City" width="100" />
+        <el-table-column prop="cityID" label="City" width="100">
+          <template #default="{ row }">
+            {{ getCityName(row.cityID) }}
+          </template>
+        </el-table-column>
         <el-table-column prop="ps_begindate" label="Start Date" width="180">
           <template #default="{ row }">
             {{ formatDateTime(row.ps_begindate) }}
@@ -135,6 +139,11 @@ const formatDateTime = (dateStr) => {
 const getServiceTypeName = (typeId) => {
   const type = serviceTypes.value.find(t => t.id === typeId)
   return type ? type.name : typeId
+}
+
+const getCityName = (cityId) => {
+  const city = cities.value.find(c => c.id === cityId)
+  return city ? city.name : cityId
 }
 
 const loadData = async () => {
