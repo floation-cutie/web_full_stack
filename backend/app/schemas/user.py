@@ -8,6 +8,8 @@ class UserBase(BaseModel):
     idno: str
     phoneNo: str
     desc: str | None = None
+    cityID: int | None = None
+    address: str | None = None
 
 class UserResponse(UserBase):
     id: int
@@ -22,6 +24,8 @@ class UserUpdate(BaseModel):
     bname: str | None = None
     phoneNo: str | None = Field(None, pattern=r"^1[3-9]\d{9}$")
     desc: str | None = None
+    cityID: int | None = None
+    address: str | None = None
 
 class PasswordUpdate(BaseModel):
     old_password: str

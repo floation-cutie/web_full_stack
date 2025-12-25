@@ -71,6 +71,8 @@ CREATE TABLE `buser_table`  (
   `udate` datetime(0) NULL DEFAULT NULL COMMENT '修改时间',
   `userlvl` varchar(8) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NULL DEFAULT NULL COMMENT '用户级别，默认普通用户，可扩展设计对应业务功能',
   `desc` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NULL DEFAULT NULL COMMENT '用户简介',
+  `cityID` int(0) NULL DEFAULT NULL COMMENT '城市标识',
+  `address` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NULL DEFAULT NULL COMMENT '详细地址',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 12 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_unicode_ci ROW_FORMAT = Compact;
 

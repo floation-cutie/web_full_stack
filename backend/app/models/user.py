@@ -17,6 +17,8 @@ class BUser(Base):
     udate = Column(DateTime, nullable=True, onupdate=datetime.utcnow)
     userlvl = Column(String(8), nullable=True)
     desc = Column(String(255), nullable=True)
+    cityID = Column(Integer, nullable=True)
+    address = Column(String(255), nullable=True)
     
     @property
     def service_requests_count(self):
