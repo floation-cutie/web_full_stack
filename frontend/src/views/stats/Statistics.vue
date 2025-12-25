@@ -109,36 +109,31 @@
         </el-table-column>
       </el-table>
 
-      <div class="pagination-wrapper">
-        <el-pagination
-          v-model:current-page="pagination.page"
-          v-model:page-size="pagination.size"
-          :total="pagination.total"
-          :page-sizes="[10, 20, 50, 100]"
-          layout="total, sizes, prev, pager, next, jumper"
-          @current-change="handlePageChange"
-          @size-change="handleSizeChange"
-        />
-      </div>
+      <Pagination
+        v-model="pagination"
+        :total="pagination.total"
+        @change="handlePaginationChange"
+      />
     </el-card>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, nextTick, watch } from 'vue'
+import { ref, reactive, onMounted, nextTick, watch } from 'vue'
 import * as echarts from 'echarts'
 import { Search } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { getMonthlyStats } from '@/api/stats'
 import { getServiceTypes } from '@/api/user'
 import { CITIES } from '@/utils/constants'
+import Pagination from '@/components/Pagination.vue'
 
 const chartRef = ref(null)
 const loading = ref(false)
 const tableData = ref([])
 const serviceTypes = ref([])
 const cities = ref(CITIES)
-const pagination = ref({ page: 1, size: 10, total: 0 })
+const pagination = reactive({ page: 1, size: 10, total: 0 })
 
 let chartInstance = null
 
@@ -222,12 +217,12 @@ const handleQuery = async () => {
       end_month: queryForm.value.end_month,
       city_id: queryForm.value.city_id,
       service_type_id: queryForm.value.service_type_id,
-      page: pagination.value.page,
-      size: pagination.value.size
+      page: pagination.page,
+      size: pagination.size
     }
-    
+
     console.log('Sending request with params:', params)
-    
+
     const res = await getMonthlyStats(params)
 
     const data = res.data || res
@@ -241,7 +236,7 @@ const handleQuery = async () => {
       successRate: calculateSuccessRate(item.completedCount || item.completed_count || 0, item.publishedCount || item.published_count || 0)
     }))
 
-    pagination.value.total = data.total || 0
+    pagination.total = data.total || 0
 
     updateChart(data.chart_data)
   } catch (error) {
@@ -346,14 +341,9 @@ const getProgressColor = (percentage) => {
   return '#F56C6C'
 }
 
-const handlePageChange = (page) => {
-  pagination.value.page = page
-  handleQuery()
-}
-
-const handleSizeChange = (size) => {
-  pagination.value.size = size
-  pagination.value.page = 1
+const handlePaginationChange = ({ page, size }) => {
+  pagination.page = page
+  pagination.size = size
   handleQuery()
 }
 
@@ -361,7 +351,7 @@ const handleReset = () => {
   initDefaultDates()
   queryForm.value.city_id = null
   queryForm.value.service_type_id = null
-  pagination.value.page = 1
+  pagination.page = 1
   handleQuery()
 }
 </script>
@@ -394,12 +384,6 @@ const handleReset = () => {
 
 .table-card {
   margin-bottom: 20px;
-}
-
-.pagination-wrapper {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 16px;
 }
 
 :deep(.el-form-item) {
